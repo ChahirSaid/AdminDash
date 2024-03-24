@@ -1,1 +1,5 @@
 node_modules/
+lib/
+bin/
+include/
+lib64/
