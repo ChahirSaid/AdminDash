@@ -157,18 +157,6 @@ const Sidebar = ({ onLogout }) => {
                 <span className="menu-link-text">Manage Team</span>
               </Link>
             </li>
-            <li className="menu-item">
-              <Link
-                to="/user"
-                className={`menu-link ${activeMenuItem === "/user" ? "active" : ""}`}
-                onClick={() => setActiveMenuItem("/user")}
-              >
-                <span className="menu-link-icon">
-                  <MdOutlinePersonAdd size={20} />
-                </span>
-                <span className="menu-link-text">New User</span>
-              </Link>
-            </li>
           </ul>
         </div>
 
