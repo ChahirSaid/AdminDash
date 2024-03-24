@@ -1,0 +1,58 @@
+/* static/css/login.css */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #3498db; /* Set background color */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Set the height to the full viewport height */
+}
+
+.container {
+    background-color: #fff; /* Set container background color */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    margin-bottom: 8px;
+}
+
+input {
+    padding: 10px;
+    margin-bottom: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    background-color: #3498db; /* Set button background color */
+    color: #fff;
+    padding: 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #2980b9; /* Set button background color on hover */
+}
+
+p {
+    color: #e74c3c; /* Set error message color */
+    margin-top: 10px;
+    text-align: center;
+}
