@@ -72,7 +72,6 @@ const Team = () => {
     };
 
     return (
-        <>
             <section className="team-page">
                 <div className="row">
                     <div className="col-12">
@@ -121,8 +120,6 @@ const Team = () => {
                         </table>
                     </div>
                 </div>
-            </section>
-
             {showModal && (
                 <div className="modal fade show" style={{ display: "block" }}>
                     <div className="modal-dialog modal-dialog-centered modal-lg">
@@ -180,7 +177,7 @@ const Team = () => {
                     </div>
                 </div>
             )}
-        </>
+        </section>
     );
 }
 
