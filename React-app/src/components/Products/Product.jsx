@@ -7,7 +7,7 @@ const Product = () => {
   const [formData, setFormData] = useState({
     name: "",
     brand: "",
-    price: "",
+    price: 0,
     status: "In Stock",
   });
 
