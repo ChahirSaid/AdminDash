@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-
+from datetime import datetime
 db = SQLAlchemy()
 
 
@@ -11,3 +11,15 @@ class User(db.Model):
 
     def __repr__(self):
         return  f"User('{self.username}', '{self.email}')"
+
+
+class Product(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    brand = db.Column(db.String(100), nullable=False)
+    price = db.Column(db.Float, nullable=False)
+    status = db.Column(db.String(20), default="In Stock")
+    created_at = db.Column(db.DateTime, default=datetime.now)
+
+    def __repr__(self) :
+        return f"Product('{self.name}', '{self.brand}', '{self.price}', '{self.status}')"
