@@ -13,6 +13,7 @@ const Product = () => {
   });
 
   const [productData, setProductData] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [editId, setEditId] = useState(null);
@@ -23,8 +24,9 @@ const Product = () => {
 
   const fetchProductData = async () => {
     try {
-      const response = await axios.get("/api/products");
+      const response = await axios.get("http://localhost:5000/api/products");
       setProductData(response.data);
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching product data:", error);
     }
@@ -34,9 +36,9 @@ const Product = () => {
     e.preventDefault();
     try {
       if (isEdit) {
-        await axios.put(`/api/products/${editId}`, formData);
+        await axios.put(`http://localhost:5000/api/products/${editId}`, formData);
       } else {
-        await axios.post("/api/products", formData);
+        await axios.post("http://localhost:5000/api/products", formData);
       }
       fetchProductData();
       setFormData({
@@ -46,6 +48,7 @@ const Product = () => {
         status: "In Stock",
       });
       setShowModal(false);
+      setIsEdit(false);
     } catch (error) {
       console.error("Error submitting product data:", error);
     }
@@ -65,12 +68,16 @@ const Product = () => {
 
   const handleDelete = async (index) => {
     try {
-      await axios.delete(`/api/products/${productData[index].id}`);
+      await axios.delete(`http://localhost:5000/api/products/${productData[index].id}`);
       fetchProductData();
     } catch (error) {
       console.error("Error deleting product:", error);
     }
   };
+  
+  console.log("Product Data:", productData);
+console.log("Loading:", loading);
+console.log("Product Data Type:", Array.isArray(productData));
 
   return (
     <section className="product-page">
@@ -100,36 +107,42 @@ const Product = () => {
               </tr>
             </thead>
             <tbody>
-              {productData.map((product, index) => (
-                <tr key={index}>
-                  <td>{index + 1}</td>
-                  <td>
-                    <img src={product.picture} alt="" width="50" height="50" />
-                  </td>
-                  <td>{product.name}</td>
-                  <td>{product.brand}</td>
-                  <td>{product.price}</td>
-                  <td>{product.status}</td>
-                  <td>
-                    <button
-                      className="btn btn-success"
-                      onClick={() => handleEdit(index)}
-                    >
-                      <i className="bi bi-pencil-square"></i>
-                    </button>
-                    <button
-                      className="btn btn-danger"
-                      onClick={() => handleDelete(index)}
-                    >
-                      <i className="bi bi-trash"></i>
-                    </button>
-                  </td>
+              {loading ? (
+                <tr>
+                  <td colSpan="7">Loading...</td>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              ) : Array.isArray(productData) ? (
+                productData.map((product, index) => (
+                  <tr key={index}>
+                    <td>{index + 1}</td>
+                    <td>
+                      <img src={product.picture} alt="" width="50" height="50" />
+                    </td>
+                    <td>{product.name}</td>
+                    <td>{product.brand}</td>
+                    <td>{product.price}</td>
+                    <td>{product.status}</td>
+                    <td>
+                      <button
+                        className="btn btn-success"
+                        onClick={() => handleEdit(index)}
+                      >
+                        <i className="bi bi-pencil-square"></i>
+                      </button>
+                      <button
+                        className="btn btn-danger"
+                        onClick={() => handleDelete(index)}
+                      >
+                        <i className="bi bi-trash"></i>
+                      </button>
+                    </td>
+                  </tr>
+              ))
+            ) : null}
+          </tbody>
+        </table>
       </div>
+    </div>
 
       {showModal && (
         <div className="modal fade show" style={{ display: "block" }}>

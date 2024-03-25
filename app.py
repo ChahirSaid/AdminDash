@@ -1,9 +1,8 @@
 from flask import Flask
-from config import Config
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_cors import CORS
-from models import User, Product
+from models import db, User, Product
 from flask import render_template, redirect, url_for
 from flask import request, jsonify
 from datetime import datetime
@@ -14,12 +13,73 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'SuperAdmin'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///admindash.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-db = SQLAlchemy(app)
+db.init_app(app)
 migrate = Migrate(app, db)
 CORS(app, resources={r"/auth": {"origins": "*"}}, supports_credentials=True)
+CORS(app, resources={r"/api/*": {"origins": "http://localhost:5173"}})
 DEFAULT_ADMIN_USERNAME = 'admin'
 DEFAULT_ADMIN_PASSWORD = 'admin'
+
+
+@app.route('/api/products', methods=['GET'])
+def get_products():
+    products = Product.query.all()
+    products_list = []
+    for product in products:
+        products_list.append({
+            'id': product.id,
+            'name': product.name,
+            'brand': product.brand,
+            'price': product.price,
+            'status': product.status
+        })
+    return jsonify(products_list)
+
+
+@app.route('/api/products/<int:id>', methods=['GET'])
+def get_product(id):
+    product = Product.query.get_or_404(id)
+    return jsonify({
+        'id': product.id,
+        'name': product.name,
+        'brand': product.brand,
+        'price': product.price,
+        'status': product.status
+    })
+
+
+@app.route('/api/products', methods=['POST'])
+def create_product():
+    data = request.json
+    new_product = Product(
+        name=data['name'],
+        brand=data['brand'],
+        price=data['price'],
+        status=data['status']
+    )
+    db.session.add(new_product)
+    db.session.commit()
+    return jsonify({'message': 'Product Created Successfully'}), 201
+
+
+@app.route('/api/products/<int:id>', methods=['DELETE'])
+def delete_product(id):
+    product = Product.query.get_or_404(id)
+    db.session.delete(product)
+    db.session.commit()
+    return jsonify({'message': 'Product Deleted Successfully'}), 200
+
+
+@app.route('/api/products/<int:id>', methods=['PUT'])
+def update_product(id):
+    product = Product.query.get_or_404(id)
+    data = request.json
+    product.name = data['name']
+    product.brand = data['brand']
+    product.price = data['price']
+    product.status = data['status']
+    db.session.commit()
+    return jsonify({'message': 'Product Updated Successfully'})
 
 
 @app.route('/auth', methods=['POST', 'OPTIONS'])
