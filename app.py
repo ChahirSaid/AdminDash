@@ -1,22 +1,25 @@
 from flask import Flask
 from config import Config
+from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from models import db
 from flask_cors import CORS
+from models import User, Product
 from flask import render_template, redirect, url_for
 from flask import request, jsonify
-from models import db, User
+from datetime import datetime
 from werkzeug.security import check_password_hash
 
 
 app = Flask(__name__)
-app.config.from_object(Config)
-db.init_app(app)
-CORS(app, resources={r"/auth": {"origins": "*"}}, supports_credentials=True)
+app.config['SECRET_KEY'] = 'SuperAdmin'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///admindash.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+CORS(app, resources={r"/auth": {"origins": "*"}}, supports_credentials=True)
 DEFAULT_ADMIN_USERNAME = 'admin'
 DEFAULT_ADMIN_PASSWORD = 'admin'
-
 
 
 @app.route('/auth', methods=['POST', 'OPTIONS'])

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import "./Product.scss";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
@@ -17,34 +18,37 @@ const Product = () => {
   const [editId, setEditId] = useState(null);
 
   useEffect(() => {
-    const storedData = localStorage.getItem("userProfile");
-    if (storedData) {
-      setProductData(JSON.parse(storedData));
-    }
+    fetchProductData();
   }, []);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (isEdit) {
-      const updatedData = productData.map((product, index) =>
-        index === editId ? formData : product
-      );
-      console.log("Updated Data:", updatedData); // Debugging
-      setProductData(updatedData);
-      setIsEdit(false);
-      setEditId(null);
-    } else {
-      console.log("New Product Data:", formData); // Debugging
-      setProductData([...productData, formData]);
+  const fetchProductData = async () => {
+    try {
+      const response = await axios.get("/api/products");
+      setProductData(response.data);
+    } catch (error) {
+      console.error("Error fetching product data:", error);
     }
-    localStorage.setItem("userProfile", JSON.stringify(productData));
-    setFormData({
-      name: "",
-      brand: "",
-      price: "",
-      status: "In Stock",
-    });
-    setShowModal(false);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      if (isEdit) {
+        await axios.put(`/api/products/${editId}`, formData);
+      } else {
+        await axios.post("/api/products", formData);
+      }
+      fetchProductData();
+      setFormData({
+        name: "",
+        brand: "",
+        price: 0,
+        status: "In Stock",
+      });
+      setShowModal(false);
+    } catch (error) {
+      console.error("Error submitting product data:", error);
+    }
   };
 
   const handleInputChange = (e) => {
@@ -54,15 +58,18 @@ const Product = () => {
 
   const handleEdit = (index) => {
     setIsEdit(true);
-    setEditId(index);
+    setEditId(productData[index].id);
     setShowModal(true);
     setFormData(productData[index]);
   };
 
-  const handleDelete = (index) => {
-    const updatedData = productData.filter((_, i) => i !== index);
-    setProductData(updatedData);
-    localStorage.setItem("userProfile", JSON.stringify(updatedData));
+  const handleDelete = async (index) => {
+    try {
+      await axios.delete(`/api/products/${productData[index].id}`);
+      fetchProductData();
+    } catch (error) {
+      console.error("Error deleting product:", error);
+    }
   };
 
   return (
@@ -145,7 +152,7 @@ const Product = () => {
                       <i className="bi bi-plus-circle-dotted"></i>
                     </label>
                     <img
-                      src="./image/Profile Icon.webp"
+                      src="/image/Profile Icon.webp"
                       alt=""
                       width="200"
                       height="200"
