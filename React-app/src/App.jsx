@@ -10,6 +10,7 @@ import BaseLayout from "./layout/BaseLayout";
 import { Dashboard, PageNotFound } from "./screens";
 import Product from "./components/Products/Product";
 import Team from "./components/Teams/Team";
+import Profile from "./components/Profile/Profile";
 
 function App() {
   const { theme, toggleTheme } = useContext(ThemeContext);
@@ -58,6 +59,7 @@ function App() {
           <Route index element={<Dashboard />} />
           <Route path="/products" element={<Product />} />
           <Route path="/team" element={<Team />} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="*" element={<PageNotFound />} />
         </Route>
         <Route
