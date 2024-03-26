@@ -1,9 +1,14 @@
 import { useContext, useEffect, useState } from "react";
 import "./App.scss";
-import AdminAuth  from "./components/AdminAuth/AdminAuth";
+import AdminAuth from "./components/AdminAuth/AdminAuth";
 import { ThemeContext } from "./context/ThemeContext";
 import { DARK_THEME, LIGHT_THEME } from "./constants/themeConstants";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import MoonIcon from "./assets/icons/moon.svg";
 import SunIcon from "./assets/icons/sun.svg";
 import BaseLayout from "./layout/BaseLayout";
@@ -14,7 +19,7 @@ import Profile from "./components/Profile/Profile";
 
 function App() {
   const { theme, toggleTheme } = useContext(ThemeContext);
-  const [authenticated, setAuthenticated] = useState(false);
+  const [authenticated, setAuthenticated] = useState(true);
 
   useEffect(() => {
     const isAuth = localStorage.getItem("authenticated");
@@ -45,33 +50,33 @@ function App() {
   return (
     <>
       <Router>
-      <Routes>
-      <Route
-          path="/"
-          element={
-            authenticated ? (
-              <BaseLayout onLogout={handleLogout} />
-            ) : (
-              <Navigate to="/Authentification" replace />
-            )
-          }
-        >
-          <Route index element={<Dashboard />} />
-          <Route path="/products" element={<Product />} />
-          <Route path="/team" element={<Team />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="*" element={<PageNotFound />} />
-        </Route>
-        <Route
-          path="/Authentification"
-          element={
-            authenticated ? (
-              <Navigate to="/" replace />
-            ) : (
-              <AdminAuth onLoginSuccess={handleloginSuccess} />
-            )
-          }
-        />
+        <Routes>
+          <Route
+            path="/"
+            element={
+              authenticated ? (
+                <BaseLayout onLogout={handleLogout} />
+              ) : (
+                <Navigate to="/Authentification" replace />
+              )
+            }
+          >
+            <Route index element={<Dashboard />} />
+            <Route path="/products" element={<Product />} />
+            <Route path="/team" element={<Team />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="*" element={<PageNotFound />} />
+          </Route>
+          <Route
+            path="/Authentification"
+            element={
+              authenticated ? (
+                <Navigate to="/" replace />
+              ) : (
+                <AdminAuth onLoginSuccess={handleloginSuccess} />
+              )
+            }
+          />
         </Routes>
 
         <button
