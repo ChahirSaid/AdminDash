@@ -13,6 +13,17 @@ class User(db.Model):
         return  f"User('{self.username}', '{self.email}')"
 
 
+class TeamMember(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    employeeName = db.Column(db.String(100))
+    employeeAge = db.Column(db.Integer)
+    employeeCity = db.Column(db.String(50))
+    employeeEmail = db.Column(db.String(100))
+    employeePhone = db.Column(db.String(20))
+    employeePost = db.Column(db.String(100))
+    startDate = db.Column(db.Date)
+
+
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)

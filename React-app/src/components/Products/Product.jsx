@@ -75,10 +75,6 @@ const Product = () => {
     }
   };
   
-  console.log("Product Data:", productData);
-console.log("Loading:", loading);
-console.log("Product Data Type:", Array.isArray(productData));
-
   return (
     <section className="product-page">
       <div className="row">
