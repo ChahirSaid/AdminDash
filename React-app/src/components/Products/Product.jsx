@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./Product.scss";
+import profileImage from './image/Profile Icon.webp';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
@@ -10,11 +11,13 @@ const Product = () => {
     brand: "",
     price: 0,
     status: "In Stock",
+    picture: null
   });
 
   const [productData, setProductData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [selectedPicture, setSelectedPicture] = useState(null);
   const [isEdit, setIsEdit] = useState(false);
   const [editId, setEditId] = useState(null);
 
@@ -35,10 +38,25 @@ const Product = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const formDataToSend = new FormData();
+      formDataToSend.append('name', formData.name);
+      formDataToSend.append('brand', formData.brand);
+      formDataToSend.append('price', formData.price);
+      formDataToSend.append('status', formData.status);
+      formDataToSend.append('picture', formData.picture); // Add the file to FormData
+  
       if (isEdit) {
-        await axios.put(`http://localhost:5000/api/products/${editId}`, formData);
+        await axios.put(`http://localhost:5000/api/products/${editId}`, formDataToSend, {
+          headers: {
+            'Content-Type': 'multipart/form-data' // Set content type for FormData
+          }
+        });
       } else {
-        await axios.post("http://localhost:5000/api/products", formData);
+        await axios.post("http://localhost:5000/api/products", formDataToSend, {
+          headers: {
+            'Content-Type': 'multipart/form-data' // Set content type for FormData
+          }
+        });
       }
       fetchProductData();
       setFormData({
@@ -46,6 +64,7 @@ const Product = () => {
         brand: "",
         price: 0,
         status: "In Stock",
+        picture: null // Reset picture to null after submission
       });
       setShowModal(false);
       setIsEdit(false);
@@ -53,10 +72,15 @@ const Product = () => {
       console.error("Error submitting product data:", error);
     }
   };
+  
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    const { name, value, files } = e.target;
+    if (name === 'picture') {
+      setFormData({ ...formData, picture: files[0] });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   const handleEdit = (index) => {
@@ -72,6 +96,14 @@ const Product = () => {
       fetchProductData();
     } catch (error) {
       console.error("Error deleting product:", error);
+    }
+  };
+  const createObjectURL = (file) => {
+    try {
+      return file ? URL.createObjectURL(file) : null;
+    } catch (error) {
+      console.error("Failed to create object URL:", error);
+      return null;
     }
   };
   
@@ -112,7 +144,21 @@ const Product = () => {
                   <tr key={index}>
                     <td>{index + 1}</td>
                     <td>
-                      <img src={product.picture} alt="" width="50" height="50" />
+                      {product.picture ? (
+                        <img
+                          src={product.picture}
+                          alt=""
+                          width="50"
+                          height="50"
+                        />
+                      ) : (
+                        <img
+                          src={profileImage}
+                          alt=""
+                          width="50"
+                          height="50"
+                        />
+                      )}
                     </td>
                     <td>{product.name}</td>
                     <td>{product.brand}</td>
@@ -157,11 +203,11 @@ const Product = () => {
                 <form onSubmit={handleSubmit} id="myForm">
                   <div className="card imgholder">
                     <label htmlFor="imgInput" className="upload">
-                      <input type="file" name="" id="imgInput" />
+                      <input type="file" name="picture" id="imgInput" onChange={handleInputChange} />
                       <i className="bi bi-plus-circle-dotted"></i>
                     </label>
                     <img
-                      src="/image/Profile Icon.webp"
+                      src={isEdit ? productData[editId]?.picture || profileImage : formData.picture ? createObjectURL(formData.picture) : profileImage}
                       alt=""
                       width="200"
                       height="200"
