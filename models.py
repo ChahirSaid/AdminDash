@@ -3,18 +3,10 @@ from datetime import datetime
 db = SQLAlchemy()
 
 
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(20), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(60), nullable=False)
-
-    def __repr__(self):
-        return  f"User('{self.username}', '{self.email}')"
-
-
 class TeamMember(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(20), unique=True, nullable=False)
+    password_hash = db.Column(db.String(128), nullable=False)
     employeeName = db.Column(db.String(100))
     employeeAge = db.Column(db.Integer)
     employeeCity = db.Column(db.String(50))
@@ -32,5 +24,33 @@ class Product(db.Model):
     status = db.Column(db.String(20), default="In Stock")
     created_at = db.Column(db.DateTime, default=datetime.now)
 
-    def __repr__(self) :
-        return f"Product('{self.name}', '{self.brand}', '{self.price}', '{self.status}')"
+
+class Customer(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    age = db.Column(db.Integer, nullable=False)
+    city = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(100), nullable=False)
+    phone = db.Column(db.String(20), nullable=False)
+
+
+class Order(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    product_name = db.Column(db.String(100), nullable=False)
+    customer_name = db.Column(db.String(100), nullable=False)
+    status = db.Column(db.String(20), nullable=False, default='Pending')
+    _price = db.Column('price', db.Float, nullable=False)
+
+    product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customer.id'), nullable=False)
+
+    product = db.relationship('Product', backref='orders')
+    customer = db.relationship('Customer', backref='orders')
+
+    @property
+    def price(self):
+        return self._price
+
+    @price.setter
+    def price(self, value):
+        self._price = value

@@ -5,7 +5,7 @@ import './Profile.scss';
 
 const Profile = () => {
     const [previewImg, setPreviewImg] = useState("placeholder.png");
-    
+    const [message, setMessage] = useState('');
     const previewImage = (event) => {
         const file = event.target.files[0];
         const reader = new FileReader();
@@ -20,17 +20,37 @@ const Profile = () => {
             setPreviewImg("placeholder.png");
         }
     }
-    
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        
+
         // Validation
+        const oldPassword = document.getElementById('oldPassword').value;
         const newPassword = document.getElementById('newPassword').value;
         const confirmPassword = document.getElementById('confirmPassword').value;
 
         if (newPassword !== confirmPassword) {
-            alert("New password and confirm password do not match");
+            setMessage("New password and confirm password do not match");
             return;
+        }
+
+        try {
+            const response = await fetch('http://localhost:5000/api/team/update_password', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body: JSON.stringify({ oldPassword, newPassword }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to update password');
+            }
+
+            const data = await response.json();
+            setMessage(data.message);
+        } catch (error) {
+            setMessage("An error occurred while updating the password");
         }
     };
 
@@ -58,7 +78,8 @@ const Profile = () => {
                     <label htmlFor="confirmPassword" className="profile-label">Confirm Password:</label>
                     <input type="password" id="confirmPassword" name="confirmPassword" className="profile-input" />
                 </div>
-                <button type="submit" className="profile-button">Submit</button>
+                {message && <p>{message}</p>}
+                <button type="submit" className="profile-button">Save</button>
             </form>
         </div>
     </section>
