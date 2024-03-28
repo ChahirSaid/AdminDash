@@ -1,10 +1,9 @@
-// Profile.jsx
-
 import React, { useState } from 'react';
-import './Profile.scss';
+import './Profile.scss'
+import profileImage from "./placeholder.png";
 
 const Profile = () => {
-    const [previewImg, setPreviewImg] = useState("placeholder.png");
+    const [previewImg, setPreviewImg] = useState(profileImage);
     const [message, setMessage] = useState('');
     const previewImage = (event) => {
         const file = event.target.files[0];
@@ -17,13 +16,12 @@ const Profile = () => {
         if (file) {
             reader.readAsDataURL(file);
         } else {
-            setPreviewImg("placeholder.png");
+            setPreviewImg(profileImage);
         }
     }
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        // Validation
         const oldPassword = document.getElementById('oldPassword').value;
         const newPassword = document.getElementById('newPassword').value;
         const confirmPassword = document.getElementById('confirmPassword').value;
@@ -61,7 +59,7 @@ const Profile = () => {
                 <div className="profile-form-group">
                     <div className="profile-imgholder-container">
                         <div className="profile-imgholder">
-                            <img src={previewImg || "placeholder.png"} alt="" width="200" height="200" className="profile-showImg" id="previewImg" />
+                            <img src={previewImg} alt="" width="200" height="200" className="profile-showImg" id="previewImg" />
                             <input type="file" id="picture" name="picture" accept="image/*" onChange={previewImage} />
                         </div>
                     </div>

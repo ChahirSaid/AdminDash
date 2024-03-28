@@ -58,13 +58,11 @@ const Order = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-        console.log("Selected Product Name:", formData.product_name);
-        console.log("Selected Customer Name:" , formData.customer_name);
         const selectedProduct = products.find(product => product.name === formData.product_name);  
-        console.log("Selected Product:", selectedProduct);
+        console.log("Selected Product Name:", formData.product_name);
 
         const selectedCustomer = customers.find(customer => customer.name === formData.customer_name);  
-        console.log("Selected Customer:", selectedCustomer);
+        console.log("Selected Customer Name:" , formData.customer_name);
         const orderData = {
             product_name: selectedProduct ? selectedProduct.name : '',
             customer_name: selectedCustomer ? selectedCustomer.name : '',
