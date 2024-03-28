@@ -13,6 +13,7 @@ class TeamMember(db.Model):
     employeeEmail = db.Column(db.String(100))
     employeePhone = db.Column(db.String(20))
     employeePost = db.Column(db.String(100))
+    picture = db.Column(db.String(100))
     startDate = db.Column(db.Date)
 
 
@@ -23,6 +24,7 @@ class Product(db.Model):
     price = db.Column(db.Float, nullable=False)
     status = db.Column(db.String(20), default="In Stock")
     created_at = db.Column(db.DateTime, default=datetime.now)
+    picture = db.Column(db.String(100))
 
 
 class Customer(db.Model):
