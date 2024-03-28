@@ -13,6 +13,7 @@ import Team from "./components/Teams/Team";
 import Profile from "./components/Profile/Profile";
 import Order from "./components/Orders/Order";
 import Customer from "./components/Customers/Customer";
+import Statistics from "./components/Statistics/Statistics";
 
 function App() {
   const { theme, toggleTheme } = useContext(ThemeContext);
@@ -64,6 +65,7 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/orders" element={<Order />} />
           <Route path="/customer" element={<Customer />} />
+          <Route path="/statistics" element={<Statistics />} />
           <Route path="*" element={<PageNotFound />} />
         </Route>
         <Route
