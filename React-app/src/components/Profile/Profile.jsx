@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './Profile.scss'
-import profileImage from "./placeholder.png";
+import profileImage from "./Profile Icon.webp";
 
 const Profile = () => {
     const [previewImg, setPreviewImg] = useState(profileImage);

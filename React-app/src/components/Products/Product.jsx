@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./Product.scss";
-import profileImage from './image/Profile Icon.webp';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import profileImage from "./image/Profile Icon.webp";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import {
+  BsPlus,
+  BsPencilSquare,
+  BsTrash,
+  BsPlusCircleDotted,
+} from "react-icons/bs";
 
 const Product = () => {
   const [formData, setFormData] = useState({
@@ -11,7 +17,7 @@ const Product = () => {
     brand: "",
     price: 0,
     status: "In Stock",
-    picture: null
+    picture: null,
   });
 
   const [productData, setProductData] = useState([]);
@@ -39,23 +45,27 @@ const Product = () => {
     e.preventDefault();
     try {
       const formDataToSend = new FormData();
-      formDataToSend.append('name', formData.name);
-      formDataToSend.append('brand', formData.brand);
-      formDataToSend.append('price', formData.price);
-      formDataToSend.append('status', formData.status);
-      formDataToSend.append('picture', formData.picture); // Add the file to FormData
-  
+      formDataToSend.append("name", formData.name);
+      formDataToSend.append("brand", formData.brand);
+      formDataToSend.append("price", formData.price);
+      formDataToSend.append("status", formData.status);
+      formDataToSend.append("picture", formData.picture); // Add the file to FormData
+
       if (isEdit) {
-        await axios.put(`http://localhost:5000/api/products/${editId}`, formDataToSend, {
-          headers: {
-            'Content-Type': 'multipart/form-data' // Set content type for FormData
+        await axios.put(
+          `http://localhost:5000/api/products/${editId}`,
+          formDataToSend,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data", // Set content type for FormData
+            },
           }
-        });
+        );
       } else {
         await axios.post("http://localhost:5000/api/products", formDataToSend, {
           headers: {
-            'Content-Type': 'multipart/form-data' // Set content type for FormData
-          }
+            "Content-Type": "multipart/form-data", // Set content type for FormData
+          },
         });
       }
       fetchProductData();
@@ -64,7 +74,7 @@ const Product = () => {
         brand: "",
         price: 0,
         status: "In Stock",
-        picture: null // Reset picture to null after submission
+        picture: null,
       });
       setShowModal(false);
       setIsEdit(false);
@@ -72,11 +82,10 @@ const Product = () => {
       console.error("Error submitting product data:", error);
     }
   };
-  
 
   const handleInputChange = (e) => {
     const { name, value, files } = e.target;
-    if (name === 'picture') {
+    if (name === "picture") {
       setFormData({ ...formData, picture: files[0] });
     } else {
       setFormData({ ...formData, [name]: value });
@@ -92,7 +101,9 @@ const Product = () => {
 
   const handleDelete = async (index) => {
     try {
-      await axios.delete(`http://localhost:5000/api/products/${productData[index].id}`);
+      await axios.delete(
+        `http://localhost:5000/api/products/${productData[index].id}`
+      );
       fetchProductData();
     } catch (error) {
       console.error("Error deleting product:", error);
@@ -106,7 +117,7 @@ const Product = () => {
       return null;
     }
   };
-  
+
   return (
     <section className="product-page">
       <div className="row">
@@ -115,7 +126,7 @@ const Product = () => {
             className="btn btn-primary newUser"
             onClick={() => setShowModal(true)}
           >
-            New Product <i className="bi bi-bag"></i>
+            New Product <BsPlus size={25} />
           </button>
         </div>
       </div>
@@ -152,12 +163,7 @@ const Product = () => {
                           height="50"
                         />
                       ) : (
-                        <img
-                          src={profileImage}
-                          alt=""
-                          width="50"
-                          height="50"
-                        />
+                        <img src={profileImage} alt="" width="50" height="50" />
                       )}
                     </td>
                     <td>{product.name}</td>
@@ -169,22 +175,22 @@ const Product = () => {
                         className="btn btn-success"
                         onClick={() => handleEdit(index)}
                       >
-                        <i className="bi bi-pencil-square"></i>
+                        <BsPencilSquare />
                       </button>
                       <button
                         className="btn btn-danger"
                         onClick={() => handleDelete(index)}
                       >
-                        <i className="bi bi-trash"></i>
+                        <BsTrash />
                       </button>
                     </td>
                   </tr>
-              ))
-            ) : null}
-          </tbody>
-        </table>
+                ))
+              ) : null}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
 
       {showModal && (
         <div className="modal fade show" style={{ display: "block" }}>
@@ -203,11 +209,22 @@ const Product = () => {
                 <form onSubmit={handleSubmit} id="myForm">
                   <div className="card imgholder">
                     <label htmlFor="imgInput" className="upload">
-                      <input type="file" name="picture" id="imgInput" onChange={handleInputChange} />
-                      <i className="bi bi-plus-circle-dotted"></i>
+                      <input
+                        type="file"
+                        name="picture"
+                        id="imgInput"
+                        onChange={handleInputChange}
+                      />
+                      <BsPlusCircleDotted size={50} color="white"/>
                     </label>
                     <img
-                      src={isEdit ? productData[editId]?.picture || profileImage : formData.picture ? createObjectURL(formData.picture) : profileImage}
+                      src={
+                        isEdit
+                          ? productData[editId]?.picture || profileImage
+                          : formData.picture
+                            ? createObjectURL(formData.picture)
+                            : profileImage
+                      }
                       alt=""
                       width="200"
                       height="200"
@@ -280,7 +297,6 @@ const Product = () => {
           </div>
         </div>
       )}
-
     </section>
   );
 };

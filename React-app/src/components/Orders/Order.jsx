@@ -3,6 +3,11 @@ import axios from "axios";
 import "./Order.scss";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import {
+  BsPlus,
+  BsPencilSquare,
+  BsTrash,
+} from "react-icons/bs";
 
 const Order = () => {
   const [formData, setFormData] = useState({
@@ -139,7 +144,7 @@ const Order = () => {
             className="btn btn-primary newUser"
             onClick={() => setShowModal(true)}
           >
-            New Order <i className="bi bi-bag"></i>
+            New Order <BsPlus size={25} />
           </button>
         </div>
       </div>
@@ -175,13 +180,13 @@ const Order = () => {
                         className="btn btn-success"
                         onClick={() => handleEdit(index)}
                       >
-                        <i className="bi bi-pencil-square"></i>
+                        <BsPencilSquare />
                       </button>
                       <button
                         className="btn btn-danger"
                         onClick={() => handleDelete(index)}
                       >
-                        <i className="bi bi-trash"></i>
+                        <BsTrash />
                       </button>
                     </td>
                   </tr>
