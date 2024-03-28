@@ -21,6 +21,7 @@ import "./Sidebar.scss";
 import { SidebarContext } from "../../context/SidebarContext";
 
 const Sidebar = ({ onLogout }) => {
+
   const { theme } = useContext(ThemeContext);
   const { isSidebarOpen, closeSidebar } = useContext(SidebarContext);
   const [activeMenuItem, setActiveMenuItem] = useState("/");
@@ -159,7 +160,6 @@ const Sidebar = ({ onLogout }) => {
             </li>
           </ul>
         </div>
-
         <div className="sidebar-menu sidebar-menu2">
           <ul className="menu-list">
             <li className="menu-item">
@@ -188,5 +188,6 @@ const Sidebar = ({ onLogout }) => {
     </nav>
   );
 };
+
 
 export default Sidebar;

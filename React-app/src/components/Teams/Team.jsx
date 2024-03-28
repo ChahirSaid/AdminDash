@@ -6,14 +6,14 @@ import './Team.scss';
 
 const Team = () => {
     const [formData, setFormData] = useState({
-        picture: '',
-        employeeName: '',
-        employeeAge: '',
-        employeeCity: '',
-        employeeEmail: '',
-        employeePhone: '',
-        employeePost: '',
-        startDate: ''
+        picture: "",
+        employeeName: "",
+        employeeAge: "",
+        employeeCity: "",
+        employeeEmail: "",
+        employeePhone: "",
+        employeePost: "",
+        startDate: ""
     });
 
     const [teamData, setTeamData] = useState([]);
@@ -21,7 +21,7 @@ const Team = () => {
     const [showModal, setShowModal] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
     const [editId, setEditId] = useState(null);
-
+    const isAdmin = true;
     useEffect(() => {
       fetchTeamData();
     }, []);
@@ -39,21 +39,28 @@ const Team = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+          let response;
           if (isEdit) {
             await axios.put(`http://localhost:5000/api/team/${editId}`, formData);
         } else {
-            await axios.post("http://localhost:5000/api/team", formData);
+            response = await axios.post("http://localhost:5000/api/team", formData);
+        }
+        if (response) {
+            const { username, password } = response.data;
+            console.log("Generated Credentials:");
+            console.log("Username:", username);
+            console.log("Password:", password);
         }
         fetchTeamData();
         setFormData({
-            picture: '',
-            employeeName: '',
-            employeeAge: '',
-            employeeCity: '',
-            employeeEmail: '',
-            employeePhone: '',
-            employeePost: '',
-            startDate: ''
+            picture: "",
+            employeeName: "",
+            employeeAge: "",
+            employeeCity: "",
+            employeeEmail: "",
+            employeePhone: "",
+            employeePost: "",
+            startDate: ""
         });
         setShowModal(false);
         setIsEdit(false);
@@ -68,14 +75,13 @@ const Team = () => {
     };
   
     const handleEdit = (index) => {
+      if (isAdmin) {
         setIsEdit(true);
         setEditId(teamData[index].id);
         setShowModal(true);
         
-        // Extract the data of the selected member
         const selectedMember = teamData[index];
         
-        // Populate the form data with the existing values
         setFormData({
             picture: selectedMember.picture,
             employeeName: selectedMember.name,
@@ -84,17 +90,20 @@ const Team = () => {
             employeeEmail: selectedMember.email,
             employeePhone: selectedMember.phone,
             employeePost: selectedMember.post,
-            startDate: selectedMember.start_date // Assuming the property name is start_date
+            startDate: selectedMember.start_date
         });
+    }
     };
     
 
     const handleDelete = async (index) => {
-      try {
-        await axios.delete(`http://localhost:5000/api/team/${teamData[index].id}`);
-        fetchTeamData();
-      } catch (error) {
-        console.error("Error Deleting Team Member:", error);
+      if (isAdmin) {
+        try {
+          await axios.delete(`http://localhost:5000/api/team/${teamData[index].id}`);
+          fetchTeamData();
+        } catch (error) {
+          console.error("Error Deleting Team Member:", error);
+        }
       }
     };
 
@@ -102,9 +111,11 @@ const Team = () => {
             <section className="team-page">
                 <div className="row">
                     <div className="col-12">
+                    {isAdmin && (
                         <button className="btn btn-primary newUser" onClick={() => setShowModal(true)}>
                             New User <i className="bi bi-people"></i>
                         </button>
+                    )}
                     </div>
                 </div>
 
@@ -127,15 +138,22 @@ const Team = () => {
                             </thead>
                             <tbody>
                             {teamData.map((member, index) => {
-                                 const formatDate = (dateString) => {
-                                    if (!dateString) return 'N/A'; // Handle empty dates
-                                    
-                                    const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
-                                    const formattedDate = new Date(dateString).toLocaleDateString(undefined, options);
-                                    return formattedDate !== 'Invalid Date' ? formattedDate : 'N/A'; // Handle invalid dates
+                                const formatDate = (dateString) => {
+                                    if (!dateString) return "N/A"; // Handle empty dates
+                
+                                    const options = {
+                                    year: "numeric",
+                                    month: "2-digit",
+                                    day: "2-digit",
+                                    };
+                                    const formattedDate = new Date(dateString).toLocaleDateString(
+                                    undefined,
+                                    options
+                                    );
+                                    return formattedDate !== "Invalid Date"
+                                    ? formattedDate
+                                    : "N/A"; // Handle invalid dates
                                 };
-                            
-                                const formattedStartDate = formatDate(member.startDate);
                                 return (
                                     <tr key={index}>
                                     <td>{index + 1}</td>
@@ -146,10 +164,15 @@ const Team = () => {
                                     <td>{member.email}</td>
                                     <td>{member.phone}</td>
                                     <td>{member.post}</td>
-                                    <td>{formattedStartDate}</td>
+                                    <td>{formatDate(member.startDate)}</td>
+                                    {console.log("Start Date:", member.startDate)}
                                     <td>
-                                        <button className="btn btn-success" onClick={() => handleEdit(index)}><i className="bi bi-pencil-square"></i></button>
-                                        <button className="btn btn-danger" onClick={() => handleDelete(index)}><i className="bi bi-trash"></i></button>
+                                      {isAdmin && (
+                                          <button className="btn btn-success" onClick={() => handleEdit(index)}><i className="bi bi-pencil-square"></i></button>
+                                          )}
+                                      {isAdmin && (
+                                          <button className="btn btn-danger" onClick={() => handleDelete(index)}><i className="bi bi-trash"></i></button>
+                                      )}
                                     </td>
                                 </tr>
                             );

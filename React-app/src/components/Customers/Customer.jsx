@@ -1,34 +1,35 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "./Product.scss";
+import "./Customer.scss";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
-const Product = () => {
+const Customer = () => {
   const [formData, setFormData] = useState({
     name: "",
-    brand: "",
-    price: 0,
-    status: "In Stock",
+    age: 0,
+    city: "",
+    email: "",
+    phone: "",
   });
 
-  const [productData, setProductData] = useState([]);
+  const [customerData, setCustomerData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [editId, setEditId] = useState(null);
 
   useEffect(() => {
-    fetchProductData();
+    fetchCustomerData();
   }, []);
 
-  const fetchProductData = async () => {
+  const fetchCustomerData = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/products");
-      setProductData(response.data);
+      const response = await axios.get("http://localhost:5000/api/customer");
+      setCustomerData(response.data);
       setLoading(false);
     } catch (error) {
-      console.error("Error fetching product data:", error);
+      console.error("Error fetching customer data:", error);
     }
   };
 
@@ -36,21 +37,22 @@ const Product = () => {
     e.preventDefault();
     try {
       if (isEdit) {
-        await axios.put(`http://localhost:5000/api/products/${editId}`, formData);
+        await axios.put(`http://localhost:5000/api/customer/${editId}`, formData);
       } else {
-        await axios.post("http://localhost:5000/api/products", formData);
+        await axios.post("http://localhost:5000/api/customer", formData);
       }
-      fetchProductData();
+      fetchCustomerData();
       setFormData({
         name: "",
-        brand: "",
-        price: 0,
-        status: "In Stock",
+        age: 0,
+        city: "",
+        email: "",
+        phone: "",
       });
       setShowModal(false);
       setIsEdit(false);
     } catch (error) {
-      console.error("Error submitting product data:", error);
+      console.error("Error submitting customer data:", error);
     }
   };
 
@@ -61,29 +63,29 @@ const Product = () => {
 
   const handleEdit = (index) => {
     setIsEdit(true);
-    setEditId(productData[index].id);
+    setEditId(customerData[index].id);
     setShowModal(true);
-    setFormData(productData[index]);
+    setFormData(customerData[index]);
   };
 
   const handleDelete = async (index) => {
     try {
-      await axios.delete(`http://localhost:5000/api/products/${productData[index].id}`);
-      fetchProductData();
+      await axios.delete(`http://localhost:5000/api/customer/${customerData[index].id}`);
+      fetchCustomerData();
     } catch (error) {
-      console.error("Error deleting product:", error);
+      console.error("Error deleting customer:", error);
     }
   };
-  
+
   return (
-    <section className="product-page">
+    <section className="customer-page">
       <div className="row">
         <div className="col-12">
           <button
             className="btn btn-primary newUser"
             onClick={() => setShowModal(true)}
           >
-            New Product <i className="bi bi-bag"></i>
+            New Customer <i className="bi bi-people"></i>
           </button>
         </div>
       </div>
@@ -94,11 +96,11 @@ const Product = () => {
             <thead>
               <tr>
                 <th>S.No</th>
-                <th>Picture</th>
                 <th>Name</th>
-                <th>Brand</th>
-                <th>Price</th>
-                <th>Status</th>
+                <th>Age</th>
+                <th>City</th>
+                <th>Email</th>
+                <th>Phone</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -107,17 +109,15 @@ const Product = () => {
                 <tr>
                   <td colSpan="7">Loading...</td>
                 </tr>
-              ) : Array.isArray(productData) ? (
-                productData.map((product, index) => (
+              ) : Array.isArray(customerData) ? (
+                customerData.map((customer, index) => (
                   <tr key={index}>
                     <td>{index + 1}</td>
-                    <td>
-                      <img src={product.picture} alt="" width="50" height="50" />
-                    </td>
-                    <td>{product.name}</td>
-                    <td>{product.brand}</td>
-                    <td>{product.price}</td>
-                    <td>{product.status}</td>
+                    <td>{customer.name}</td>
+                    <td>{customer.age}</td>
+                    <td>{customer.city}</td>
+                    <td>{customer.email}</td>
+                    <td>{customer.phone}</td>
                     <td>
                       <button
                         className="btn btn-success"
@@ -133,12 +133,12 @@ const Product = () => {
                       </button>
                     </td>
                   </tr>
-              ))
-            ) : null}
-          </tbody>
-        </table>
+                ))
+              ) : null}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
 
       {showModal && (
         <div className="modal fade show" style={{ display: "block" }}>
@@ -155,22 +155,9 @@ const Product = () => {
               </div>
               <div className="modal-body">
                 <form onSubmit={handleSubmit} id="myForm">
-                  <div className="card imgholder">
-                    <label htmlFor="imgInput" className="upload">
-                      <input type="file" name="" id="imgInput" />
-                      <i className="bi bi-plus-circle-dotted"></i>
-                    </label>
-                    <img
-                      src="/image/Profile Icon.webp"
-                      alt=""
-                      width="200"
-                      height="200"
-                      className="img"
-                    />
-                  </div>
                   <div className="inputField">
                     <div>
-                      <label htmlFor="name">Name:</label>
+                    <label htmlFor="name">Name:</label>
                       <input
                         type="text"
                         name="name"
@@ -181,39 +168,48 @@ const Product = () => {
                       />
                     </div>
                     <div>
-                      <label htmlFor="brand">Brand:</label>
-                      <input
-                        type="text"
-                        name="brand"
-                        id="brand"
-                        value={formData.brand}
-                        onChange={handleInputChange}
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="price">Price:</label>
+                      <label htmlFor="age">Age:</label>
                       <input
                         type="number"
-                        name="price"
-                        id="price"
-                        value={formData.price}
+                        name="age"
+                        id="age"
+                        value={formData.age}
                         onChange={handleInputChange}
                         required
                       />
                     </div>
                     <div>
-                      <label htmlFor="status">Status:</label>
-                      <select
-                        id="status"
-                        name="status"
-                        value={formData.status}
+                      <label htmlFor="city">City:</label>
+                      <input
+                        type="text"
+                        name="city"
+                        id="city"
+                        value={formData.city}
                         onChange={handleInputChange}
                         required
-                      >
-                        <option value="In Stock">In Stock</option>
-                        <option value="Out of Stock">Out of Stock</option>
-                      </select>
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="email">E-mail:</label>
+                      <input
+                        type="email"
+                        name="email"
+                        id="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="phone">Phone:</label>
+                      <input
+                        type="text"
+                        name="phone"
+                        id="phone"
+                        value={formData.phone}
+                        onChange={handleInputChange}
+                        required
+                      />
                     </div>
                   </div>
                   <div className="modal-footer">
@@ -234,9 +230,8 @@ const Product = () => {
           </div>
         </div>
       )}
-
     </section>
   );
 };
 
-export default Product;
+export default Customer;
