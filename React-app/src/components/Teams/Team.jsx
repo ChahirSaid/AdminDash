@@ -3,6 +3,12 @@ import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import './Team.scss';
+import {
+    BsPlus,
+    BsPencilSquare,
+    BsTrash,
+    BsPlusCircleDotted,
+  } from "react-icons/bs";
 
 const Team = () => {
     const [formData, setFormData] = useState({
@@ -113,7 +119,7 @@ const Team = () => {
                     <div className="col-12">
                     {isAdmin && (
                         <button className="btn btn-primary newUser" onClick={() => setShowModal(true)}>
-                            New User <i className="bi bi-people"></i>
+                            New User <BsPlus size={25} />
                         </button>
                     )}
                     </div>
@@ -168,10 +174,10 @@ const Team = () => {
                                     {console.log("Start Date:", member.startDate)}
                                     <td>
                                       {isAdmin && (
-                                          <button className="btn btn-success" onClick={() => handleEdit(index)}><i className="bi bi-pencil-square"></i></button>
+                                          <button className="btn btn-success" onClick={() => handleEdit(index)}><BsPencilSquare /></button>
                                           )}
                                       {isAdmin && (
-                                          <button className="btn btn-danger" onClick={() => handleDelete(index)}><i className="bi bi-trash"></i></button>
+                                          <button className="btn btn-danger" onClick={() => handleDelete(index)}><BsTrash /></button>
                                       )}
                                     </td>
                                 </tr>
@@ -194,7 +200,7 @@ const Team = () => {
                                     <div className="card imgholder">
                                         <label htmlFor="imgInput" className="upload">
                                             <input type="file" name="picture" id="imgInput" onChange={handleInputChange} />
-                                            <i className="bi bi-plus-circle-dotted"></i>
+                                            <BsPlusCircleDotted color='white' size={50}/>
                                         </label>
                                         <img src={formData.picture} alt="" width="200" height="200" className="img" />
                                     </div>

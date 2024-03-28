@@ -3,11 +3,16 @@ import axios from "axios";
 import "./Customer.scss";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import {
+  BsPlus,
+  BsPencilSquare,
+  BsTrash,
+} from "react-icons/bs";
 
 const Customer = () => {
   const [formData, setFormData] = useState({
     name: "",
-    age: 0,
+    age: "",
     city: "",
     email: "",
     phone: "",
@@ -44,7 +49,7 @@ const Customer = () => {
       fetchCustomerData();
       setFormData({
         name: "",
-        age: 0,
+        age: "",
         city: "",
         email: "",
         phone: "",
@@ -85,7 +90,7 @@ const Customer = () => {
             className="btn btn-primary newUser"
             onClick={() => setShowModal(true)}
           >
-            New Customer <i className="bi bi-people"></i>
+            New Customer <BsPlus size={25} />
           </button>
         </div>
       </div>
@@ -123,13 +128,13 @@ const Customer = () => {
                         className="btn btn-success"
                         onClick={() => handleEdit(index)}
                       >
-                        <i className="bi bi-pencil-square"></i>
+                        <BsPencilSquare />
                       </button>
                       <button
                         className="btn btn-danger"
                         onClick={() => handleDelete(index)}
                       >
-                        <i className="bi bi-trash"></i>
+                        <BsTrash />
                       </button>
                     </td>
                   </tr>
@@ -172,6 +177,8 @@ const Customer = () => {
                       <input
                         type="number"
                         name="age"
+                        min="18"
+                        max="120"
                         id="age"
                         value={formData.age}
                         onChange={handleInputChange}

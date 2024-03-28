@@ -124,18 +124,6 @@ const Sidebar = ({ onLogout }) => {
             </li>
             <li className="menu-item">
               <Link
-                to="/kanban"
-                className={`menu-link ${activeMenuItem === "/kanban" ? "active" : ""}`}
-                onClick={() => setActiveMenuItem("/kanban")}
-              >
-                <span className="menu-link-icon">
-                  <MdOutlineDoneAll size={18} />
-                </span>
-                <span className="menu-link-text">Kanban</span>
-              </Link>
-            </li>
-            <li className="menu-item">
-              <Link
                 to="/customer"
                 className={`menu-link ${activeMenuItem === "/customer" ? "active" : ""}`}
                 onClick={() => setActiveMenuItem("/customer")}
