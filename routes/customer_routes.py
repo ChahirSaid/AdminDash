@@ -47,7 +47,7 @@ def get_customer(customer_id):
     return jsonify(customer_dict)
 
 
-@customer_bp.route('/<int:costumer_id>', methods=['PUT'])
+@customer_bp.route('/<int:customer_id>', methods=['PUT'])
 def update_customer(customer_id):
     customer = Customer.query.get_or_404(customer_id)
     data = request.json
