@@ -1,27 +1,18 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { HiDotsHorizontal } from "react-icons/hi";
-import { Link } from "react-router-dom";
 
-const AreaTableAction = () => {
+const AreaTableAction = ({ orderId, handleDelete, closeDropdown }) => {
   const [showDropdown, setShowDropdown] = useState(false);
+
   const handleDropdown = () => {
     setShowDropdown(!showDropdown);
+    closeDropdown();
   };
 
-  const dropdownRef = useRef(null);
-
-  const handleClickOutside = (event) => {
-    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-      setShowDropdown(false);
-    }
+  const handleClickDelete = () => {
+    handleDelete(orderId);
+    setShowDropdown(false);
   };
-
-  useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.addEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
 
   return (
     <>
@@ -32,22 +23,12 @@ const AreaTableAction = () => {
       >
         <HiDotsHorizontal size={18} />
         {showDropdown && (
-          <div className="action-dropdown-menu" ref={dropdownRef}>
+          <div className="action-dropdown-menu">
             <ul className="dropdown-menu-list">
               <li className="dropdown-menu-item">
-                <Link to="/view" className="dropdown-menu-link">
-                  View
-                </Link>
-              </li>
-              <li className="dropdown-menu-item">
-                <Link to="/view" className="dropdown-menu-link">
-                  Edit
-                </Link>
-              </li>
-              <li className="dropdown-menu-item">
-                <Link to="/view" className="dropdown-menu-link">
+                <button className="dropdown-menu-link" onClick={handleClickDelete}>
                   Delete
-                </Link>
+                </button>
               </li>
             </ul>
           </div>

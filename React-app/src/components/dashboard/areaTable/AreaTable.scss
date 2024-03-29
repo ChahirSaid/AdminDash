@@ -105,10 +105,10 @@
     right: 50%;
     transform: translateX(50%);
     height: auto;
-    min-width: 80px;
+    min-width: 130px;
     box-shadow: rgba(100, 100, 111, 0.1) 0px 1px 4px 0px;
     background-color: var(--secondary-color);
-    padding: 6px 10px;
+    padding: 6px 6px;
     z-index: 1;
     border-radius: 8px;
     border: 1px solid var(--border-color-inverted);
@@ -128,4 +128,5 @@
       opacity: 0.9;
     }
   }
+
 }

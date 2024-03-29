@@ -1,74 +1,45 @@
+import { useState, useEffect } from "react";
+import axios from "axios";
 import AreaTableAction from "./AreaTableAction";
 import "./AreaTable.scss";
 
 const TABLE_HEADS = [
   "Products",
   "Order ID",
-  "Date",
   "Customer name",
   "Status",
-  "Amount",
+  "Price",
   "Action",
 ];
 
-const TABLE_DATA = [
-  {
-    id: 100,
-    name: "Iphone 13 Pro",
-    order_id: 11232,
-    date: "Jun 29,2022",
-    customer: "Afaq Karim",
-    status: "delivered",
-    amount: 400,
-  },
-  {
-    id: 101,
-    name: "Macbook Pro",
-    order_id: 11232,
-    date: "Jun 29,2022",
-    customer: "Afaq Karim",
-    status: "pending",
-    amount: 288,
-  },
-  {
-    id: 102,
-    name: "Apple Watch",
-    order_id: 11232,
-    date: "Jun 29,2022",
-    customer: "Afaq Karim",
-    status: "canceled",
-    amount: 500,
-  },
-  {
-    id: 103,
-    name: "Microsoft Book",
-    order_id: 11232,
-    date: "Jun 29,2022",
-    customer: "Afaq Karim",
-    status: "delivered",
-    amount: 100,
-  },
-  {
-    id: 104,
-    name: "Apple Pen",
-    order_id: 11232,
-    date: "Jun 29,2022",
-    customer: "Afaq Karim",
-    status: "delivered",
-    amount: 60,
-  },
-  {
-    id: 105,
-    name: "Airpods",
-    order_id: 11232,
-    date: "Jun 29,2022",
-    customer: "Afaq Karim",
-    status: "delivered",
-    amount: 80,
-  },
-];
-
 const AreaTable = () => {
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
+  const fetchOrders = async () => {
+    try {
+      const response = await axios.get("http://localhost:5000/api/orders");
+      setOrders(response.data);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async (orderId) => {
+    try {
+      await axios.delete(`http://localhost:5000/api/orders/${orderId}`);
+      fetchOrders(); // Fetch updated orders after deletion
+    } catch (error) {
+      console.error("Error deleting order:", error);
+    }
+  };
+
   return (
     <section className="content-area-table">
       <div className="data-table-info">
@@ -78,34 +49,39 @@ const AreaTable = () => {
         <table>
           <thead>
             <tr>
-              {TABLE_HEADS?.map((th, index) => (
+              {TABLE_HEADS.map((th, index) => (
                 <th key={index}>{th}</th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {TABLE_DATA?.map((dataItem) => {
-              return (
-                <tr key={dataItem.id}>
-                  <td>{dataItem.name}</td>
-                  <td>{dataItem.order_id}</td>
-                  <td>{dataItem.date}</td>
-                  <td>{dataItem.customer}</td>
+            {loading ? (
+              <tr>
+                <td colSpan={TABLE_HEADS.length}>Loading...</td>
+              </tr>
+            ) : orders.length === 0 ? (
+              <tr>
+                <td colSpan={TABLE_HEADS.length}>No orders found.</td>
+              </tr>
+            ) : (
+              orders.map((order, index) => (
+                <tr key={order.id}>
+                  <td>{order.product_name}</td>
+                  <td>{index + 1}</td> {/* Display order ID based on index */}
+                  <td>{order.customer_name}</td>
                   <td>
-                    <div className="dt-status">
-                      <span
-                        className={`dt-status-dot dot-${dataItem.status}`}
-                      ></span>
-                      <span className="dt-status-text">{dataItem.status}</span>
+                    <div className={`dt-status dot-${order.status}`}>
+                      <span className="dt-status-dot"></span>
+                      <span className="dt-status-text">{order.status}</span>
                     </div>
                   </td>
-                  <td>${dataItem.amount.toFixed(2)}</td>
+                  <td>{order.product_price ? `$${order.product_price.toFixed(2)}` : 'N/A'}</td> {/* Display product_price */}
                   <td className="dt-cell-action">
-                    <AreaTableAction />
+                    <AreaTableAction orderId={order.id} handleDelete={handleDelete} />
                   </td>
                 </tr>
-              );
-            })}
+              ))
+            )}
           </tbody>
         </table>
       </div>
