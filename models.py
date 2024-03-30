@@ -13,8 +13,6 @@ class TeamMember(db.Model):
     employeeEmail = db.Column(db.String(100))
     employeePhone = db.Column(db.String(20))
     employeePost = db.Column(db.String(100))
-    picture = db.Column(db.String(100))
-    startDate = db.Column(db.DateTime, default=datetime.utcnow)
 
 
 class Product(db.Model):

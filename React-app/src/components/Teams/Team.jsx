@@ -7,19 +7,16 @@ import {
     BsPlus,
     BsPencilSquare,
     BsTrash,
-    BsPlusCircleDotted,
-  } from "react-icons/bs";
+} from "react-icons/bs";
 
 const Team = () => {
     const [formData, setFormData] = useState({
-        picture: "",
         employeeName: "",
         employeeAge: "",
         employeeCity: "",
         employeeEmail: "",
         employeePhone: "",
-        employeePost: "",
-        startDate: ""
+        employeePost: ""
     });
 
     const [teamData, setTeamData] = useState([]);
@@ -28,50 +25,45 @@ const Team = () => {
     const [isEdit, setIsEdit] = useState(false);
     const [editId, setEditId] = useState(null);
     const isAdmin = true;
+
     useEffect(() => {
-      fetchTeamData();
+        fetchTeamData();
     }, []);
 
     const fetchTeamData = async () => {
-      try {
-        const response = await axios.get("http://localhost:5000/api/team");
-        setTeamData(response.data);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching team data:", error);
-      }
+        try {
+            const response = await axios.get("http://localhost:5000/api/team");
+            setTeamData(response.data);
+            setLoading(false);
+        } catch (error) {
+            console.error("Error fetching team data:", error);
+        }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-          let response;
-          if (isEdit) {
-            await axios.put(`http://localhost:5000/api/team/${editId}`, formData);
-        } else {
-            response = await axios.post("http://localhost:5000/api/team", formData);
-        }
-        if (response) {
-            const { username, password } = response.data;
-            console.log("Generated Credentials:");
-            console.log("Username:", username);
-            console.log("Password:", password);
-        }
-        fetchTeamData();
-        setFormData({
-            picture: "",
-            employeeName: "",
-            employeeAge: "",
-            employeeCity: "",
-            employeeEmail: "",
-            employeePhone: "",
-            employeePost: "",
-            startDate: ""
-        });
-        setShowModal(false);
-        setIsEdit(false);
+            let response;
+            if (isEdit) {
+                await axios.put(`http://localhost:5000/api/team/${editId}`, formData);
+            } else {
+                response = await axios.post("http://localhost:5000/api/team", formData);
+            }
+            if (response) {
+                fetchTeamData();
+                setFormData({
+                    employeeName: "",
+                    employeeAge: "",
+                    employeeCity: "",
+                    employeeEmail: "",
+                    employeePhone: "",
+                    employeePost: ""
+                });
+                setShowModal(false);
+                setIsEdit(false);
+            }
         } catch (error) {
-          console.error("Error Submitting team data:", error);
+            console.error("Error Submitting team data:", error);
         }
     };
 
@@ -79,114 +71,90 @@ const Team = () => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
-  
+
     const handleEdit = (index) => {
-      if (isAdmin) {
-        setIsEdit(true);
-        setEditId(teamData[index].id);
-        setShowModal(true);
-        
-        const selectedMember = teamData[index];
-        
-        setFormData({
-            picture: selectedMember.picture,
-            employeeName: selectedMember.name,
-            employeeAge: selectedMember.age,
-            employeeCity: selectedMember.city,
-            employeeEmail: selectedMember.email,
-            employeePhone: selectedMember.phone,
-            employeePost: selectedMember.post,
-            startDate: selectedMember.start_date
-        });
-    }
+        if (isAdmin) {
+            setIsEdit(true);
+            setEditId(teamData[index].id);
+            setShowModal(true);
+
+            const selectedMember = teamData[index];
+
+            setFormData({
+                employeeName: selectedMember.name,
+                employeeAge: selectedMember.age,
+                employeeCity: selectedMember.city,
+                employeeEmail: selectedMember.email,
+                employeePhone: selectedMember.phone,
+                employeePost: selectedMember.post
+            });
+        }
     };
-    
 
     const handleDelete = async (index) => {
-      if (isAdmin) {
-        try {
-          await axios.delete(`http://localhost:5000/api/team/${teamData[index].id}`);
-          fetchTeamData();
-        } catch (error) {
-          console.error("Error Deleting Team Member:", error);
+        if (isAdmin) {
+            try {
+                await axios.delete(`http://localhost:5000/api/team/${teamData[index].id}`);
+                fetchTeamData();
+            } catch (error) {
+                console.error("Error Deleting Team Member:", error);
+            }
         }
-      }
     };
 
     return (
-            <section className="team-page">
-                <div className="row">
-                    <div className="col-12">
+        <section className="team-page">
+            <div className="row">
+                <div className="col-12">
                     {isAdmin && (
                         <button className="btn btn-primary newUser" onClick={() => setShowModal(true)}>
                             New User <BsPlus size={25} />
                         </button>
                     )}
-                    </div>
                 </div>
+            </div>
 
-                <div className="row">
-                    <div className="col-12">
-                        <table className="table table-striped table-hover mt-3 text-center table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>S.No</th>
-                                    <th>Picture</th>
-                                    <th>Name</th>
-                                    <th>Age</th>
-                                    <th>City</th>
-                                    <th>Email</th>
-                                    <th>Phone</th>
-                                    <th>Post</th>
-                                    <th>Start Date</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+            <div className="row">
+                <div className="col-12">
+                    <table className="table table-striped table-hover mt-3 text-center table-bordered">
+                        <thead>
+                            <tr>
+                                <th>S.No</th>
+                                <th>Name</th>
+                                <th>Age</th>
+                                <th>City</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Post</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
                             {teamData.map((member, index) => {
-                                const formatDate = (dateString) => {
-                                    if (!dateString) return "N/A"; // Handle empty dates
-                
-                                    const options = {
-                                    year: "numeric",
-                                    month: "2-digit",
-                                    day: "2-digit",
-                                    };
-                                    const formattedDate = new Date(dateString).toLocaleDateString(
-                                    undefined,
-                                    options
-                                    );
-                                    return formattedDate !== "Invalid Date"
-                                    ? formattedDate
-                                    : "N/A"; // Handle invalid dates
-                                };
                                 return (
                                     <tr key={index}>
-                                    <td>{index + 1}</td>
-                                    <td><img src={member.picture} alt="" width="50" height="50" /></td>
-                                    <td>{member.name}</td>
-                                    <td>{member.age}</td>
-                                    <td>{member.city}</td>
-                                    <td>{member.email}</td>
-                                    <td>{member.phone}</td>
-                                    <td>{member.post}</td>
-                                    <td>{formatDate(member.startDate)}</td>
-                                    {console.log("Start Date:", member.startDate)}
-                                    <td>
-                                      {isAdmin && (
-                                          <button className="btn btn-success" onClick={() => handleEdit(index)}><BsPencilSquare /></button>
-                                          )}
-                                      {isAdmin && (
-                                          <button className="btn btn-danger" onClick={() => handleDelete(index)}><BsTrash /></button>
-                                      )}
-                                    </td>
-                                </tr>
-                            );
-                        })}
-                            </tbody>
-                        </table>
-                    </div>
+                                        <td>{index + 1}</td>
+                                        <td>{member.name}</td>
+                                        <td>{member.age}</td>
+                                        <td>{member.city}</td>
+                                        <td>{member.email}</td>
+                                        <td>{member.phone}</td>
+                                        <td>{member.post}</td>
+                                        <td>
+                                            {isAdmin && (
+                                                <button className="btn btn-success" onClick={() => handleEdit(index)}><BsPencilSquare /></button>
+                                            )}
+                                            {isAdmin && (
+                                                <button className="btn btn-danger" onClick={() => handleDelete(index)}><BsTrash /></button>
+                                            )}
+                                        </td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
                 </div>
+            </div>
             {showModal && (
                 <div className="modal fade show" style={{ display: "block" }}>
                     <div className="modal-dialog modal-dialog-centered modal-lg">
@@ -197,13 +165,6 @@ const Team = () => {
                             </div>
                             <div className="modal-body">
                                 <form onSubmit={handleSubmit} id="myForm">
-                                    <div className="card imgholder">
-                                        <label htmlFor="imgInput" className="upload">
-                                            <input type="file" name="picture" id="imgInput" onChange={handleInputChange} />
-                                            <BsPlusCircleDotted color='white' size={50}/>
-                                        </label>
-                                        <img src={formData.picture} alt="" width="200" height="200" className="img" />
-                                    </div>
                                     <div className="inputField">
                                         <div>
                                             <label htmlFor="name">Name:</label>
@@ -228,10 +189,6 @@ const Team = () => {
                                         <div>
                                             <label htmlFor="post">Post:</label>
                                             <input type="text" name="employeePost" id="post" value={formData.employeePost} onChange={handleInputChange} required />
-                                        </div>
-                                        <div>
-                                            <label htmlFor="sDate">Start Date:</label>
-                                            <input type="date" name="startDate" id="sDate" value={formData.startDate} onChange={handleInputChange} required />
                                         </div>
                                     </div>
                                     <div className="modal-footer">

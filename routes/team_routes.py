@@ -42,8 +42,7 @@ def get_team_members():
             'city': member.employeeCity,
             'email': member.employeeEmail,
             'phone': member.employeePhone,
-            'post': member.employeePost,
-            'start_date': member.startDate.strftime('%Y-%m-%d')
+            'post': member.employeePost
         })
     return jsonify(t_members_list)
 
@@ -58,8 +57,7 @@ def get_team_member(id):
         'city': member.employeeCity,
         'email': member.employeeEmail,
         'phone': member.employeePhone,
-        'post': member.employeePost,
-        'start_date': member.startDate
+        'post': member.employeePost
     })
 
 
@@ -69,7 +67,6 @@ def create_team_member():
     username = generate_unique_username(data['employeeName'])
     password = generate_random_password()
     password_hash = generate_password_hash(password)
-    start_date = datetime.strptime(data['startDate'], '%Y-%m-%d').date()
     n_member = TeamMember(
         username=username,
         password_hash=password_hash,
@@ -78,8 +75,7 @@ def create_team_member():
         employeeCity=data['employeeCity'],
         employeeEmail=data['employeeEmail'],
         employeePhone=data['employeePhone'],
-        employeePost=data['employeePost'],
-        startDate=start_date
+        employeePost=data['employeePost']
     )
     db.session.add(n_member)
     db.session.commit()
@@ -138,6 +134,5 @@ def update_team_member(id):
     member.employeeEmail = data['employeeEmail']
     member.employeePhone = data['employeePhone']
     member.employeePost = data['employeePost']
-    member.startDate = datetime.strptime(data['startDate'], '%Y-%m-%d').date()
     db.session.commit()
     return jsonify({'message': 'Team Member Updated Successfully'})
