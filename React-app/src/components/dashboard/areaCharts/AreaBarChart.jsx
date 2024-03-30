@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   BarChart,
   Bar,
@@ -13,63 +13,72 @@ import { FaArrowUpLong } from "react-icons/fa6";
 import { LIGHT_THEME } from "../../../constants/themeConstants";
 import "./AreaCharts.scss";
 
-const data = [
-  {
-    month: "Jan",
-    loss: 70,
-    profit: 100,
-  },
-  {
-    month: "Feb",
-    loss: 55,
-    profit: 85,
-  },
-  {
-    month: "Mar",
-    loss: 35,
-    profit: 90,
-  },
-  {
-    month: "April",
-    loss: 90,
-    profit: 70,
-  },
-  {
-    month: "May",
-    loss: 55,
-    profit: 80,
-  },
-  {
-    month: "Jun",
-    loss: 30,
-    profit: 50,
-  },
-  {
-    month: "Jul",
-    loss: 32,
-    profit: 75,
-  },
-  {
-    month: "Aug",
-    loss: 62,
-    profit: 86,
-  },
-  {
-    month: "Sep",
-    loss: 55,
-    profit: 78,
-  },
-];
-
-const AreaBarChart = () => {
+const AreaBarChart = ({ ordersData }) => {
   const { theme } = useContext(ThemeContext);
+  const [data, setData] = useState([]);
+  const [months, setMonths] = useState([]);
+  const [percentageDifference, setPercentageDifference] = useState(0);
+  const [totalRevenue, setTotalRevenue] = useState(0);
+
+  useEffect(() => {
+    if (ordersData && ordersData.orders) {
+      const uniqueMonths = new Set();
+      const chartData = ordersData.orders.reduce((acc, order) => {
+        const date = new Date(order.date);
+        const month = date.toLocaleString("default", { month: "short" });
+        const monthYear = `${month}`;
+        uniqueMonths.add(monthYear);
+  
+        if (!acc[monthYear]) {
+          acc[monthYear] = {
+            month: monthYear,
+            profit: 0,
+            loss: 0,
+          };
+        }
+  
+        if (order.status === 'Refunded') {
+          acc[monthYear].loss += Math.abs(order.price);
+        } else if (order.price > 0) {
+          acc[monthYear].profit += order.price;
+        } else {
+          acc[monthYear].loss += Math.abs(order.price);
+        }
+  
+        return acc;
+      }, {});
+  
+      const sortedMonths = Array.from(uniqueMonths).sort((a, b) => {
+        const monthsOrder = [
+          "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+        ];
+        return monthsOrder.indexOf(a) - monthsOrder.indexOf(b);
+      });
+  
+      setMonths(sortedMonths);
+      setData(sortedMonths.map(month => chartData[month]));
+  
+      // Calculate total revenue for the current month
+      setTotalRevenue(ordersData.totals.total_sales_revenue);
+  
+      // Calculate percentage difference
+      const prevMonthRevenue = ordersData.orders.reduce((acc, order, index) => {
+        if (index === ordersData.orders.length - 2) {
+          return acc + Math.abs(order.price);
+        }
+        return acc;
+      }, 0);
+      const percentDiff = ((totalRevenue - prevMonthRevenue) / prevMonthRevenue) * 100;
+      setPercentageDifference(percentDiff.toFixed(2));
+    }
+  }, [ordersData, totalRevenue]);  
 
   const formatTooltipValue = (value) => {
-    return `${value}k`;
+    return `${value}`;
   };
 
   const formatYAxisLabel = (value) => {
-    return `${value}k`;
+    return `${value}`;
   };
 
   const formatLegendValue = (value) => {
@@ -81,18 +90,16 @@ const AreaBarChart = () => {
       <div className="bar-chart-info">
         <h5 className="bar-chart-title">Total Revenue</h5>
         <div className="chart-info-data">
-          <div className="info-data-value">$50.4K</div>
+          <div className="info-data-value">{`$${totalRevenue}`}</div>
           <div className="info-data-text">
             <FaArrowUpLong />
-            <p>5% than last month.</p>
+            <p>{`${percentageDifference}% than last month.`}</p>
           </div>
         </div>
       </div>
       <div className="bar-chart-wrapper">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
-            width={500}
-            height={200}
             data={data}
             margin={{
               top: 5,
@@ -102,7 +109,6 @@ const AreaBarChart = () => {
             }}
           >
             <XAxis
-              padding={{ left: 10 }}
               dataKey="month"
               tickSize={0}
               axisLine={false}
@@ -112,7 +118,6 @@ const AreaBarChart = () => {
               }}
             />
             <YAxis
-              padding={{ bottom: 10, top: 10 }}
               tickFormatter={formatYAxisLabel}
               tickCount={6}
               axisLine={false}

@@ -23,7 +23,8 @@ const AreaTable = () => {
   const fetchOrders = async () => {
     try {
       const response = await axios.get("http://localhost:5000/api/orders");
-      setOrders(response.data);
+      console.log("Orders data:", response.data);
+      setOrders(response.data.orders || []);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching orders:", error);
@@ -34,7 +35,7 @@ const AreaTable = () => {
   const handleDelete = async (orderId) => {
     try {
       await axios.delete(`http://localhost:5000/api/orders/${orderId}`);
-      fetchOrders(); // Fetch updated orders after deletion
+      fetchOrders();
     } catch (error) {
       console.error("Error deleting order:", error);
     }
@@ -59,7 +60,7 @@ const AreaTable = () => {
               <tr>
                 <td colSpan={TABLE_HEADS.length}>Loading...</td>
               </tr>
-            ) : orders.length === 0 ? (
+            ) : !orders || orders.length === 0 ? ( // Check if orders is null or undefined
               <tr>
                 <td colSpan={TABLE_HEADS.length}>No orders found.</td>
               </tr>
@@ -67,7 +68,7 @@ const AreaTable = () => {
               orders.map((order, index) => (
                 <tr key={order.id}>
                   <td>{order.product_name}</td>
-                  <td>{index + 1}</td> {/* Display order ID based on index */}
+                  <td>{order.id}</td> {/* Display actual order ID */}
                   <td>{order.customer_name}</td>
                   <td>
                     <div className={`dt-status dot-${order.status}`}>
@@ -75,7 +76,7 @@ const AreaTable = () => {
                       <span className="dt-status-text">{order.status}</span>
                     </div>
                   </td>
-                  <td>{order.product_price ? `$${order.product_price.toFixed(2)}` : 'N/A'}</td> {/* Display product_price */}
+                  <td>{order.price ? `$${order.price.toFixed(2)}` : 'N/A'}</td> {/* Display price */}
                   <td className="dt-cell-action">
                     <AreaTableAction orderId={order.id} handleDelete={handleDelete} />
                   </td>

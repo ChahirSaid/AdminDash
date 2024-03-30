@@ -1,3 +1,4 @@
+import React from "react";
 import PropTypes from "prop-types";
 import {
   PieChart,
@@ -7,12 +8,12 @@ import {
 } from "recharts";
 
 const AreaCard = ({ colors, percentFillValue, cardInfo }) => {
-  const filledValue = (percentFillValue / 100) * 360; // 360 degress for a full circle
+  const filledValue = (percentFillValue / 100) * 360;
   const remainedValue = 360 - filledValue;
 
   const data = [
     { name: "Remained", value: remainedValue },
-    { name: "Achieved Sales", value: filledValue },
+    { name: "Achieved", value: filledValue },
   ];
 
   const renderTooltipContent = (value) => {
@@ -54,10 +55,10 @@ const AreaCard = ({ colors, percentFillValue, cardInfo }) => {
   );
 };
 
-export default AreaCard;
-
 AreaCard.propTypes = {
   colors: PropTypes.array.isRequired,
   percentFillValue: PropTypes.number.isRequired,
   cardInfo: PropTypes.object.isRequired,
 };
+
+export default AreaCard;

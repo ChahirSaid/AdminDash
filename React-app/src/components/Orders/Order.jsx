@@ -15,6 +15,7 @@ const Order = () => {
     customer_name: "",
     product_price: 0,
     status: "Pending",
+    date: ""
   });
 
   const [products, setProducts] = useState([]);
@@ -33,13 +34,17 @@ const Order = () => {
 
   const fetchOrderData = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/orders");
-      setOrderData(response.data);
-      setLoading(false);
+        const response = await axios.get("http://localhost:5000/api/orders");
+        console.log("Order Data:", response.data);
+        const orders = response.data.orders;
+        const sortedOrders = orders.sort((a, b) => new Date(b.date) - new Date(a.date));
+        setOrderData(sortedOrders);
+        setLoading(false);
     } catch (error) {
-      console.error("Error fetching order data:", error);
+        console.error("Error fetching order data:", error);
     }
-  };
+};
+
 
   const fetchProducts = async () => {
     try {
@@ -68,15 +73,20 @@ const Order = () => {
 
         const selectedCustomer = customers.find(customer => customer.name === formData.customer_name);  
         console.log("Selected Customer Name:" , formData.customer_name);
+
         const orderData = {
             product_name: selectedProduct ? selectedProduct.name : '',
             customer_name: selectedCustomer ? selectedCustomer.name : '',
             price: selectedProduct ? selectedProduct.price : 0,
-            status: formData.status
+            status: formData.status,
+            date: formData.date
         };
-  
-        await axios.post("http://localhost:5000/api/orders", orderData);
-  
+        if (isEdit) {
+          await axios.put(`http://localhost:5000/api/orders/${editId}`, orderData);
+        } else {
+          await axios.post("http://localhost:5000/api/orders", orderData);
+        }
+
         fetchOrderData();
         resetFormData();
         setShowModal(false);
@@ -92,6 +102,7 @@ const Order = () => {
       customer_name: "",
       product_price: 0,
       status: "Pending",
+      date: ""
     });
   };
 
@@ -122,11 +133,29 @@ const Order = () => {
   };
   
   const handleEdit = (index) => {
+    const editedOrder = orderData[index];
+    const statusOptions = ['Delivered', 'Pending', 'Canceled', 'Refunded'];
+  
     setIsEdit(true);
-    setEditId(orderData[index].id);
+    setEditId(editedOrder.id);
     setShowModal(true);
-    setFormData(orderData[index]);
+
+    const formattedDate = editedOrder.date ? new Date(editedOrder.date).toISOString().slice(0, 16) : '';
+
+    const selectedProduct = products.find(product => product.name === editedOrder.product_name);
+    const selectedCustomer = customers.find(customer => customer.name === editedOrder.customer_name);
+
+    setFormData(prevFormData => ({
+      ...prevFormData,
+      product_name: selectedProduct ? selectedProduct.name : prevFormData.product_name,
+      customer_name: selectedCustomer ? selectedCustomer.name : prevFormData.customer_name,
+      product_price: selectedProduct ? selectedProduct.price : prevFormData.product_price,
+      status: editedOrder.status,
+      date: formattedDate
+    }));
   };
+  
+  
 
   const handleDelete = async (index) => {
     try {
@@ -142,7 +171,10 @@ const Order = () => {
         <div className="col-12">
           <button
             className="btn btn-primary newUser"
-            onClick={() => setShowModal(true)}
+            onClick={() => {
+               setShowModal(true);
+               setIsEdit(false);
+              }}
           >
             New Order <BsPlus size={25} />
           </button>
@@ -158,6 +190,7 @@ const Order = () => {
                 <th>Product</th>
                 <th>Customer</th>
                 <th>Status</th>
+                <th>Date</th>
                 <th>Price</th>
                 <th>Actions</th>
               </tr>
@@ -165,7 +198,7 @@ const Order = () => {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan="6">Loading...</td>
+                  <td colSpan="7">Loading...</td>
                 </tr>
               ) : Array.isArray(orderData) ? (
                 orderData.map((order, index) => (
@@ -174,7 +207,8 @@ const Order = () => {
                     <td>{order.product_name}</td>
                     <td>{order.customer_name}</td>
                     <td>{order.status}</td>
-                    <td>{order.product_price}</td>
+                    <td>{order.date.slice(0, 19)}</td>
+                    <td>{order.price}</td>
                     <td>
                       <button
                         className="btn btn-success"
@@ -218,7 +252,7 @@ const Order = () => {
                       <select
                         name="product"
                         id="product"
-                        value={formData.product_id}
+                        value={formData.product_name}
                         onChange={handleInputChange}
                         required
                       >
@@ -235,7 +269,7 @@ const Order = () => {
                       <select
                         name="customer"
                         id="customer"
-                        value={formData.customer_id}
+                        value={formData.customer_name}
                         onChange={handleInputChange}
                         required
                       >
@@ -271,7 +305,19 @@ const Order = () => {
                         <option value="Delivered">Delivered</option>
                         <option value="Pending">Pending</option>
                         <option value="Canceled">Canceled</option>
+                        {isEdit && <option value="Refunded">Refunded</option>}
                       </select>
+                    </div>
+                    <div>
+                      <label htmlFor="date">Date:</label>
+                      <input
+                      type="datetime-local"
+                      name="date"
+                      id="date"
+                      value={formData.date}
+                      onChange={handleInputChange}
+                      required
+                      />
                     </div>
                   </div>
                   <div className="modal-footer">

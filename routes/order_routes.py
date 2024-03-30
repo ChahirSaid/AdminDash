@@ -1,53 +1,96 @@
 from flask import request, jsonify
 from . import order_bp
+from datetime import datetime
 from models import db, Order, Product, Customer
+
 
 @order_bp.route('', methods=['POST'])
 def create_order():
     data = request.json
 
-    # Retrieve product from product name
-    product_name = data.get('product_name')
-    product = Product.query.filter_by(name=product_name).first()
-    if product is None:
-        return jsonify({'error': 'Product not found'}), 404
+    # Validate input data
+    required_fields = ['product_name', 'customer_name', 'status', 'date']
+    if not all(field in data for field in required_fields):
+        return jsonify({'error': 'Missing required fields'}), 400
 
-    # Retrieve customer from customer name
-    customer_name = data.get('customer_name')
-    customer = Customer.query.filter_by(name=customer_name).first()
-    if customer is None:
-        return jsonify({'error': 'Customer not found'}), 404
+    try:
+        # Parse the date string into a datetime object
+        date_str = data['date']
+        formatted_date = datetime.strptime(date_str, '%Y-%m-%dT%H:%M')
 
-    # Create the order with product and customer details
-    new_order = Order(
-        product_name=product_name,
-        customer_name=customer_name,
-        price=product.price,
-        status=data['status'],
-        product_id=product.id,
-        customer_id=customer.id
-    )
+        # Retrieve product and customer by name
+        product = Product.query.filter_by(name=data['product_name']).first()
+        customer = Customer.query.filter_by(name=data['customer_name']).first()
 
-    db.session.add(new_order)
-    db.session.commit()
+        if product is None:
+            return jsonify({'error': 'Product not found'}), 404
+        if customer is None:
+            return jsonify({'error': 'Customer not found'}), 404
 
-    return jsonify({'message': 'Order Created successfully'}), 201
+        # Create the order
+        new_order = Order(
+            product_name=data['product_name'],
+            customer_name=data['customer_name'],
+            price=product.price,
+            status=data['status'],
+            product_id=product.id,
+            customer_id=customer.id,
+            date=formatted_date
+        )
+
+        db.session.add(new_order)
+        db.session.commit()
+
+        return jsonify({'message': 'Order created successfully'}), 201
+    except ValueError:
+        return jsonify({'error': 'Invalid date format'}), 400
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
 
 
 @order_bp.route('', methods=['GET'])
 def get_all_orders():
-    orders = Order.query.all()
-    order_list = []
-    for order in orders:
-        order_dict = {
-            'id': order.id,
-            'product_name': order.product_name,
-            'customer_name': order.customer_name,
-            'status': order.status,
-            'product_price': order.product.price
+    try:
+        orders = Order.query.all()
+        orders_data = []
+        total_sales_revenue = 0
+        total_profit = 0
+
+        if orders:  # Check if orders list is not empty
+            for order in orders:
+                product_price = order.price
+                cost_price = 0.7 * product_price
+                profit_per_order = product_price - cost_price
+
+                order_data = {
+                    'id': order.id,
+                    'product_name': order.product_name,
+                    'customer_name': order.customer_name,
+                    'price': order.price,
+                    'status': order.status,
+                    'date': order.date.strftime('%Y-%m-%d %H:%M:%S') if order.date else None
+                }
+                orders_data.append(order_data)
+
+                total_sales_revenue += product_price
+                total_profit += profit_per_order
+
+        # Calculate profit_per_order after looping through all orders
+        profit_per_order = total_profit / len(orders) if orders else 0
+
+        response_data = {
+            'total_sales_revenue': total_sales_revenue,
+            'total_profit': total_profit,
+            'profit_per_order': profit_per_order
         }
-        order_list.append(order_dict)
-    return jsonify(order_list)
+
+        return jsonify({
+            'orders': orders_data,
+            'totals': response_data
+        }), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 @order_bp.route('/<int:order_id>', methods=['GET'])
 def get_order(order_id):
@@ -56,23 +99,46 @@ def get_order(order_id):
         'id': order.id,
         'product_name': order.product_name,
         'customer_name': order.customer_name,
-        'price': order.price,
-        'status': order.status
+        'status': order.status,
+        'product_price': order.price,
+        'date': order.date.strftime('%Y-%m-%d %H:%M:%S')  # Format date as string
     }
-    return jsonify(order_dict)
+    return jsonify(order_dict), 200
+
 
 @order_bp.route('/<int:order_id>', methods=['PUT'])
 def update_order(order_id):
     order = Order.query.get_or_404(order_id)
     data = request.json
-    order.product_name = data.get('product_name', order.product_name)
-    order.customer_name = data.get('customer_name', order.customer_name)
-    order.price = data.get('price', order.price)
-    order.status = data.get('status', order.status)
-    order.product_id = data.get('product_id', order.product_id)
-    order.customer_id = data.get('customer_id', order.customer_id)
-    db.session.commit()
-    return jsonify({'message': 'Order Updated Successfully'})
+
+    try:
+        order.product_name = data.get('product_name', order.product_name)
+        order.customer_name = data.get('customer_name', order.customer_name)
+        order.price = data.get('price', order.price)
+        order.status = data.get('status', order.status)
+        order.product_id = data.get('product_id', order.product_id)
+        order.customer_id = data.get('customer_id', order.customer_id)
+
+        if 'date' in data:
+            order.date = datetime.fromisoformat(data['date'])
+
+        db.session.commit()
+
+        updated_order = Order.query.get(order_id)
+        updated_order_dict = {
+            'id': updated_order.id,
+            'product_name': updated_order.product_name,
+            'customer_name': updated_order.customer_name,
+            'status': updated_order.status,
+            'product_price': updated_order.price,
+            'date': updated_order.date.strftime('%Y-%m-%d %H:%M:%S')
+        }
+        return jsonify({'message': 'Order Updated Successfully', 'order': updated_order_dict}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+
 
 @order_bp.route('/<int:order_id>', methods=['DELETE'])
 def delete_order(order_id):
