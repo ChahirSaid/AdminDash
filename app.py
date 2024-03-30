@@ -19,7 +19,7 @@ app.register_blueprint(team_bp)
 app.register_blueprint(customer_bp)
 app.register_blueprint(order_bp)
 migrate = Migrate(app, db)
-CORS(app, resources={r"/auth": {"origins": "*"}}, supports_credentials=True)
+CORS(app, resources={r"/auth": {"origins": "http://localhost:5173"}}, supports_credentials=True)
 CORS(app, resources={r"/api/*": {"origins": "http://localhost:5173"}}, supports_credentials=True)
 DEFAULT_ADMIN_USERNAME = 'admin'
 DEFAULT_ADMIN_PASSWORD = 'admin'

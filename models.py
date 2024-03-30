@@ -14,7 +14,7 @@ class TeamMember(db.Model):
     employeePhone = db.Column(db.String(20))
     employeePost = db.Column(db.String(100))
     picture = db.Column(db.String(100))
-    startDate = db.Column(db.Date)
+    startDate = db.Column(db.DateTime, default=datetime.utcnow)
 
 
 class Product(db.Model):
@@ -42,7 +42,7 @@ class Order(db.Model):
     customer_name = db.Column(db.String(100), nullable=False)
     status = db.Column(db.String(20), nullable=False, default='Pending')
     _price = db.Column('price', db.Float, nullable=False)
-
+    date = db.Column(db.DateTime, default=datetime.utcnow)
     product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
     customer_id = db.Column(db.Integer, db.ForeignKey('customer.id'), nullable=False)
 
