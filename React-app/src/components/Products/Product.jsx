@@ -12,14 +12,15 @@ import {
 } from "react-icons/bs";
 
 const Product = () => {
-  const [formData, setFormData] = useState({
+  const initialFormData = {
     name: "",
     brand: "",
     price: 0,
     status: "In Stock",
     picture: null,
-  });
+  };
 
+  const [formData, setFormData] = useState(initialFormData);
   const [productData, setProductData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -62,20 +63,18 @@ const Product = () => {
           }
         );
       } else {
-        await axios.post("http://localhost:5000/api/products", formDataToSend, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
+        await axios.post(
+          "http://localhost:5000/api/products",
+          formDataToSend,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
       }
       fetchProductData();
-      setFormData({
-        name: "",
-        brand: "",
-        price: 0,
-        status: "In Stock",
-        picture: null,
-      });
+      setFormData(initialFormData);
       setShowModal(false);
       setIsEdit(false);
     } catch (error) {
@@ -96,7 +95,10 @@ const Product = () => {
     setIsEdit(true);
     setEditId(productData[index].id);
     setShowModal(true);
-    setFormData(productData[index]);
+    setFormData({
+      ...productData[index],
+      picture: null,
+    });
   };
 
   const handleDelete = async (index) => {
@@ -116,6 +118,12 @@ const Product = () => {
       console.error("Failed to create object URL:", error);
       return null;
     }
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setFormData(initialFormData);
+    setIsEdit(false);
   };
 
   return (
@@ -163,7 +171,12 @@ const Product = () => {
                           height="50"
                         />
                       ) : (
-                        <img src={profileImage} alt="" width="50" height="50" />
+                        <img
+                          src={profileImage}
+                          alt=""
+                          width="50"
+                          height="50"
+                        />
                       )}
                     </td>
                     <td>{product.name}</td>
@@ -201,7 +214,7 @@ const Product = () => {
                 <button
                   type="button"
                   className="btn-close"
-                  onClick={() => setShowModal(false)}
+                  onClick={handleCloseModal}
                   aria-label="Close"
                 ></button>
               </div>
@@ -215,15 +228,15 @@ const Product = () => {
                         id="imgInput"
                         onChange={handleInputChange}
                       />
-                      <BsPlusCircleDotted size={50} color="white"/>
+                      <BsPlusCircleDotted size={50} color="white" />
                     </label>
                     <img
                       src={
                         isEdit
                           ? productData[editId]?.picture || profileImage
                           : formData.picture
-                            ? createObjectURL(formData.picture)
-                            : profileImage
+                          ? createObjectURL(formData.picture)
+                          : profileImage
                       }
                       alt=""
                       width="200"
@@ -283,7 +296,7 @@ const Product = () => {
                     <button
                       type="button"
                       className="btn btn-secondary"
-                      onClick={() => setShowModal(false)}
+                      onClick={handleCloseModal}
                     >
                       Close
                     </button>

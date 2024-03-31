@@ -14,11 +14,9 @@ def create_order():
         return jsonify({'error': 'Missing required fields'}), 400
 
     try:
-        # Parse the date string into a datetime object
         date_str = data['date']
         formatted_date = datetime.strptime(date_str, '%Y-%m-%dT%H:%M')
 
-        # Retrieve product and customer by name
         product = Product.query.filter_by(name=data['product_name']).first()
         customer = Customer.query.filter_by(name=data['customer_name']).first()
 
@@ -27,7 +25,6 @@ def create_order():
         if customer is None:
             return jsonify({'error': 'Customer not found'}), 404
 
-        # Create the order
         new_order = Order(
             product_name=data['product_name'],
             customer_name=data['customer_name'],
@@ -57,7 +54,7 @@ def get_all_orders():
         total_sales_revenue = 0
         total_profit = 0
 
-        if orders:  # Check if orders list is not empty
+        if orders:
             for order in orders:
                 product_price = order.price
                 cost_price = 0.7 * product_price
@@ -74,10 +71,8 @@ def get_all_orders():
                 orders_data.append(order_data)
 
                 total_sales_revenue += product_price
-                total_profit += profit_per_order
 
-        # Calculate profit_per_order after looping through all orders
-        profit_per_order = total_profit / len(orders) if orders else 0
+        total_profit = sum(order['price'] - (order['price'] * 0.7) for order in orders_data)
 
         response_data = {
             'total_sales_revenue': total_sales_revenue,
@@ -91,6 +86,7 @@ def get_all_orders():
         }), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
 
 @order_bp.route('/<int:order_id>', methods=['GET'])
 def get_order(order_id):
@@ -137,7 +133,6 @@ def update_order(order_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
-
 
 
 @order_bp.route('/<int:order_id>', methods=['DELETE'])

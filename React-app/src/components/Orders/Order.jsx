@@ -105,7 +105,11 @@ const Order = () => {
       date: ""
     });
   };
-
+  const handleNewOrderClick = () => {
+    setShowModal(true);
+    setIsEdit(false);
+    resetFormData();
+  };
   const handleInputChange = async (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -134,7 +138,6 @@ const Order = () => {
   
   const handleEdit = (index) => {
     const editedOrder = orderData[index];
-    const statusOptions = ['Delivered', 'Pending', 'Canceled', 'Refunded'];
   
     setIsEdit(true);
     setEditId(editedOrder.id);
@@ -171,10 +174,7 @@ const Order = () => {
         <div className="col-12">
           <button
             className="btn btn-primary newUser"
-            onClick={() => {
-               setShowModal(true);
-               setIsEdit(false);
-              }}
+            onClick={handleNewOrderClick}
           >
             New Order <BsPlus size={25} />
           </button>

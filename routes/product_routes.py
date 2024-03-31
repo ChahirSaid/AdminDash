@@ -30,6 +30,7 @@ def get_products():
         products_list.append(product_data)
     return jsonify(products_list)
 
+
 @product_bp.route('/<int:id>', methods=['GET'])
 def get_product(id):
     product = Product.query.get_or_404(id)
@@ -67,7 +68,6 @@ def create_product():
         picture = request.files['picture']
         picture_filename = secure_filename(picture.filename)
         
-        # Ensure the directory exists
         directory = os.path.join('React-app', 'src', 'components', 'Products', 'image')
         os.makedirs(directory, exist_ok=True)
         
@@ -103,23 +103,17 @@ def update_product(id):
     product.price = data['price']
     product.status = data['status']
 
-    # Check if a new picture file is being uploaded
     if 'picture' in request.files:
         picture = request.files['picture']
         if picture.filename != '':
-            # Generate a secure filename for the picture
             picture_filename = secure_filename(picture.filename)
 
-            # Save the picture to the directory
             directory = os.path.join('React-app', 'src', 'components', 'Products', 'image')
             os.makedirs(directory, exist_ok=True)
             picture_path = os.path.join(directory, picture_filename)
             picture.save(picture_path)
 
-            # Update the product's picture attribute with the new filename
             product.picture = picture_filename
 
     db.session.commit()
     return jsonify({'message': 'Product Updated Successfully'})
-
-
