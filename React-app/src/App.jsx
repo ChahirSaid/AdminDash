@@ -1,49 +1,49 @@
-import { useContext, useEffect, useState } from "react";
-import "./App.scss";
-import AdminAuth  from "./components/AdminAuth/AdminAuth";
-import { ThemeContext } from "./context/ThemeContext";
-import { DARK_THEME, LIGHT_THEME } from "./constants/themeConstants";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import MoonIcon from "./assets/icons/moon.svg";
-import SunIcon from "./assets/icons/sun.svg";
-import BaseLayout from "./layout/BaseLayout";
-import { Dashboard, PageNotFound } from "./screens";
-import Product from "./components/Products/Product";
-import Team from "./components/Teams/Team";
-import Profile from "./components/Profile/Profile";
-import Order from "./components/Orders/Order";
-import Customer from "./components/Customers/Customer";
-import Statistics from "./components/Statistics/Statistics";
+import { useContext, useEffect, useState } from 'react'
+import './App.scss'
+import AdminAuth from './components/AdminAuth/AdminAuth'
+import { ThemeContext } from './context/ThemeContext'
+import { DARK_THEME, LIGHT_THEME } from './constants/themeConstants'
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import MoonIcon from './assets/icons/moon.svg'
+import SunIcon from './assets/icons/sun.svg'
+import BaseLayout from './layout/BaseLayout'
+import { Dashboard, PageNotFound } from './screens'
+import Product from './components/Products/Product'
+import Team from './components/Teams/Team'
+import Profile from './components/Profile/Profile'
+import Order from './components/Orders/Order'
+import Customer from './components/Customers/Customer'
+import Statistics from './components/Statistics/Statistics'
 
-function App() {
-  const { theme, toggleTheme } = useContext(ThemeContext);
-  const [authenticated, setAuthenticated] = useState(false);
+function App () {
+  const { theme, toggleTheme } = useContext(ThemeContext)
+  const [authenticated, setAuthenticated] = useState(false)
 
   useEffect(() => {
-    const isAuth = localStorage.getItem("authenticated");
+    const isAuth = localStorage.getItem('authenticated')
     if (isAuth) {
-      setAuthenticated(true);
+      setAuthenticated(true)
     }
-  }, []);
+  }, [])
 
   const handleloginSuccess = () => {
-    setAuthenticated(true);
-    localStorage.setItem("authenticated", "true");
-  };
+    setAuthenticated(true)
+    localStorage.setItem('authenticated', 'true')
+  }
 
   const handleLogout = () => {
-    setAuthenticated(false);
-    localStorage.removeItem("authenticated");
-    return <Navigate to="/Authentification" replace />;
-  };
+    setAuthenticated(false)
+    localStorage.removeItem('authenticated')
+    return <Navigate to="/Authentification" replace />
+  }
 
   useEffect(() => {
     if (theme === DARK_THEME) {
-      document.body.classList.add("dark-mode");
+      document.body.classList.add('dark-mode')
     } else {
-      document.body.classList.remove("dark-mode");
+      document.body.classList.remove('dark-mode')
     }
-  }, [theme]);
+  }, [theme])
 
   return (
     <>
@@ -52,11 +52,13 @@ function App() {
       <Route
           path="/"
           element={
-            authenticated ? (
+            authenticated
+              ? (
               <BaseLayout onLogout={handleLogout} />
-            ) : (
+                )
+              : (
               <Navigate to="/Authentification" replace />
-            )
+                )
           }
         >
           <Route index element={<Dashboard />} />
@@ -71,11 +73,13 @@ function App() {
         <Route
           path="/Authentification"
           element={
-            authenticated ? (
+            authenticated
+              ? (
               <Navigate to="/" replace />
-            ) : (
+                )
+              : (
               <AdminAuth onLoginSuccess={handleloginSuccess} />
-            )
+                )
           }
         />
         </Routes>
@@ -92,7 +96,7 @@ function App() {
         </button>
       </Router>
     </>
-  );
+  )
 }
 
-export default App;
+export default App

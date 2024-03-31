@@ -4,7 +4,8 @@ from . import team_bp
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 import random
-import string, secrets
+import string
+import secrets
 
 
 def get_current_user(username):
@@ -18,9 +19,11 @@ def get_current_user(username):
 
 def generate_unique_username(employee_name):
     username = employee_name.lower().replace(" ", "")
-    existing_user = TeamMember.query.filter_by(employeeName=employee_name).first()
+    existing_user = TeamMember.query.filter_by(
+        employeeName=employee_name).first()
     if existing_user:
-        username += ''.join(random.choices(string.ascii_lowercase + string.digits, k=4))
+        username += ''.join(random.choices(string.ascii_lowercase +
+                            string.digits, k=4))
     return username
 
 

@@ -1,152 +1,151 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import "./Order.scss";
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
+import './Order.scss'
+import 'bootstrap/dist/css/bootstrap.min.css'
+import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 import {
   BsPlus,
   BsPencilSquare,
-  BsTrash,
-} from "react-icons/bs";
+  BsTrash
+} from 'react-icons/bs'
 
 const Order = () => {
   const [formData, setFormData] = useState({
-    product_name: "",
-    customer_name: "",
+    product_name: '',
+    customer_name: '',
     product_price: 0,
-    status: "Pending",
-    date: ""
-  });
+    status: 'Pending',
+    date: ''
+  })
 
-  const [products, setProducts] = useState([]);
-  const [customers, setCustomers] = useState([]);
-  const [orderData, setOrderData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [showModal, setShowModal] = useState(false);
-  const [isEdit, setIsEdit] = useState(false);
-  const [editId, setEditId] = useState(null);
+  const [products, setProducts] = useState([])
+  const [customers, setCustomers] = useState([])
+  const [orderData, setOrderData] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [showModal, setShowModal] = useState(false)
+  const [isEdit, setIsEdit] = useState(false)
+  const [editId, setEditId] = useState(null)
 
   useEffect(() => {
-    fetchOrderData();
-    fetchProducts();
-    fetchCustomers();
-  }, []);
+    fetchOrderData()
+    fetchProducts()
+    fetchCustomers()
+  }, [])
 
   const fetchOrderData = async () => {
     try {
-        const response = await axios.get("http://localhost:5000/api/orders");
-        console.log("Order Data:", response.data);
-        const orders = response.data.orders;
-        const sortedOrders = orders.sort((a, b) => new Date(b.date) - new Date(a.date));
-        setOrderData(sortedOrders);
-        setLoading(false);
+      const response = await axios.get('http://localhost:5000/api/orders')
+      console.log('Order Data:', response.data)
+      const orders = response.data.orders
+      const sortedOrders = orders.sort((a, b) => new Date(b.date) - new Date(a.date))
+      setOrderData(sortedOrders)
+      setLoading(false)
     } catch (error) {
-        console.error("Error fetching order data:", error);
+      console.error('Error fetching order data:', error)
     }
-};
-
+  }
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/products");
-      setProducts(response.data);
-      console.log("Products:", response.data);
+      const response = await axios.get('http://localhost:5000/api/products')
+      setProducts(response.data)
+      console.log('Products:', response.data)
     } catch (error) {
-      console.error("Error fetching products:", error);
+      console.error('Error fetching products:', error)
     }
-  };
+  }
 
   const fetchCustomers = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/customer");
-      setCustomers(response.data);
+      const response = await axios.get('http://localhost:5000/api/customer')
+      setCustomers(response.data)
     } catch (error) {
-      console.error("Error fetching customers:", error);
+      console.error('Error fetching customers:', error)
     }
-  };
+  }
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
     try {
-        const selectedProduct = products.find(product => product.name === formData.product_name);  
-        console.log("Selected Product Name:", formData.product_name);
+      const selectedProduct = products.find(product => product.name === formData.product_name)
+      console.log('Selected Product Name:', formData.product_name)
 
-        const selectedCustomer = customers.find(customer => customer.name === formData.customer_name);  
-        console.log("Selected Customer Name:" , formData.customer_name);
+      const selectedCustomer = customers.find(customer => customer.name === formData.customer_name)
+      console.log('Selected Customer Name:', formData.customer_name)
 
-        const orderData = {
-            product_name: selectedProduct ? selectedProduct.name : '',
-            customer_name: selectedCustomer ? selectedCustomer.name : '',
-            price: selectedProduct ? selectedProduct.price : 0,
-            status: formData.status,
-            date: formData.date
-        };
-        if (isEdit) {
-          await axios.put(`http://localhost:5000/api/orders/${editId}`, orderData);
-        } else {
-          await axios.post("http://localhost:5000/api/orders", orderData);
-        }
+      const orderData = {
+        product_name: selectedProduct ? selectedProduct.name : '',
+        customer_name: selectedCustomer ? selectedCustomer.name : '',
+        price: selectedProduct ? selectedProduct.price : 0,
+        status: formData.status,
+        date: formData.date
+      }
+      if (isEdit) {
+        await axios.put(`http://localhost:5000/api/orders/${editId}`, orderData)
+      } else {
+        await axios.post('http://localhost:5000/api/orders', orderData)
+      }
 
-        fetchOrderData();
-        resetFormData();
-        setShowModal(false);
-        setIsEdit(false);
+      fetchOrderData()
+      resetFormData()
+      setShowModal(false)
+      setIsEdit(false)
     } catch (error) {
-        console.error("Error submitting order data:", error);
+      console.error('Error submitting order data:', error)
     }
-};
+  }
 
   const resetFormData = () => {
     setFormData({
-      product_name: "",
-      customer_name: "",
+      product_name: '',
+      customer_name: '',
       product_price: 0,
-      status: "Pending",
-      date: ""
-    });
-  };
+      status: 'Pending',
+      date: ''
+    })
+  }
   const handleNewOrderClick = () => {
-    setShowModal(true);
-    setIsEdit(false);
-    resetFormData();
-  };
+    setShowModal(true)
+    setIsEdit(false)
+    resetFormData()
+  }
   const handleInputChange = async (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  
-    if (name === "product") {
+    const { name, value } = e.target
+    setFormData({ ...formData, [name]: value })
+
+    if (name === 'product') {
       try {
-        const product = products.find(product => product.name === value);
+        const product = products.find(product => product.name === value)
         if (product) {
           setFormData(prevData => ({
             ...prevData,
             product_name: product.name,
             product_price: product.price
-          }));
+          }))
         }
       } catch (error) {
-        console.error("Error fetching product price:", error);
+        console.error('Error fetching product price:', error)
       }
     }
-    if (name === "customer") {
-      const customer = customers.find(customer => customer.name === value);
+    if (name === 'customer') {
+      const customer = customers.find(customer => customer.name === value)
       if (customer) {
-        setFormData(prevData => ({ ...prevData, customer_name: customer.name }));
+        setFormData(prevData => ({ ...prevData, customer_name: customer.name }))
       }
     }
-  };
-  
+  }
+
   const handleEdit = (index) => {
-    const editedOrder = orderData[index];
-  
-    setIsEdit(true);
-    setEditId(editedOrder.id);
-    setShowModal(true);
+    const editedOrder = orderData[index]
 
-    const formattedDate = editedOrder.date ? new Date(editedOrder.date).toISOString().slice(0, 16) : '';
+    setIsEdit(true)
+    setEditId(editedOrder.id)
+    setShowModal(true)
 
-    const selectedProduct = products.find(product => product.name === editedOrder.product_name);
-    const selectedCustomer = customers.find(customer => customer.name === editedOrder.customer_name);
+    const formattedDate = editedOrder.date ? new Date(editedOrder.date).toISOString().slice(0, 16) : ''
+
+    const selectedProduct = products.find(product => product.name === editedOrder.product_name)
+    const selectedCustomer = customers.find(customer => customer.name === editedOrder.customer_name)
 
     setFormData(prevFormData => ({
       ...prevFormData,
@@ -155,19 +154,17 @@ const Order = () => {
       product_price: selectedProduct ? selectedProduct.price : prevFormData.product_price,
       status: editedOrder.status,
       date: formattedDate
-    }));
-  };
-  
-  
+    }))
+  }
 
   const handleDelete = async (index) => {
     try {
-      await axios.delete(`http://localhost:5000/api/orders/${orderData[index].id}`);
-      fetchOrderData();
+      await axios.delete(`http://localhost:5000/api/orders/${orderData[index].id}`)
+      fetchOrderData()
     } catch (error) {
-      console.error("Error deleting order:", error);
+      console.error('Error deleting order:', error)
     }
-  };
+  }
   return (
     <section className="order-page">
       <div className="row">
@@ -180,7 +177,7 @@ const Order = () => {
           </button>
         </div>
       </div>
-  
+
       <div className="row">
         <div className="col-12">
           <table className="table table-striped table-hover mt-3 text-center table-bordered">
@@ -196,12 +193,15 @@ const Order = () => {
               </tr>
             </thead>
             <tbody>
-              {loading ? (
+              {loading
+                ? (
                 <tr>
                   <td colSpan="7">Loading...</td>
                 </tr>
-              ) : Array.isArray(orderData) ? (
-                orderData.map((order, index) => (
+                  )
+                : Array.isArray(orderData)
+                  ? (
+                      orderData.map((order, index) => (
                   <tr key={index}>
                     <td>{index + 1}</td>
                     <td>{order.product_name}</td>
@@ -224,15 +224,16 @@ const Order = () => {
                       </button>
                     </td>
                   </tr>
-                ))
-              ) : null}
+                      ))
+                    )
+                  : null}
             </tbody>
           </table>
         </div>
       </div>
-  
+
       {showModal && (
-        <div className="modal fade show" style={{ display: "block" }}>
+        <div className="modal fade show" style={{ display: 'block' }}>
           <div className="modal-dialog modal-dialog-centered modal-lg">
             <div className="modal-content">
               <div className="modal-header">
@@ -339,7 +340,7 @@ const Order = () => {
         </div>
       )}
     </section>
-  );
-};
+  )
+}
 
-export default Order;
+export default Order

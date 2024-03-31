@@ -1,9 +1,7 @@
-import { Outlet } from "react-router-dom";
-import { Sidebar } from "../components";
-import { useState, useEffect } from "react";
+import { Outlet } from 'react-router-dom'
+import { Sidebar } from '../components'
 
 const BaseLayout = ({ onLogout }) => {
-
   return (
     <main className="page-wrapper">
       {/* left of page */}
@@ -13,10 +11,10 @@ const BaseLayout = ({ onLogout }) => {
         <Outlet />
       </div>
       <div>
-         <Sidebar onLogout={onLogout}/>
+         <Sidebar onLogout={ onLogout }/>
       </div>
     </main>
-  );
-};
+  )
+}
 
-export default BaseLayout;
+export default BaseLayout

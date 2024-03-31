@@ -1,7 +1,10 @@
-import os, base64
-from flask import jsonify, request, current_app
+import os
+import base64
+from flask import jsonify
+from flask import request, current_app
 from werkzeug.utils import secure_filename
-from models import db, Product
+from models import db
+from models import Product
 from . import product_bp
 
 
@@ -43,7 +46,9 @@ def get_product(id):
     }
     if product.picture:
         try:
-            image_path = os.path.join(current_app.root_path, 'React-app', 'src', 'components', 'Products', 'image', product.picture)
+            image_path = os.path.join(current_app.root_path, 'React-app',
+                                      'src', 'components',
+                                      'Products', 'image', product.picture)
             with open(image_path, 'rb') as img_file:
                 encoded_image = base64.b64encode(img_file.read()).decode('utf-8')
             product_data['picture'] = 'data:image/jpeg;base64,' + encoded_image

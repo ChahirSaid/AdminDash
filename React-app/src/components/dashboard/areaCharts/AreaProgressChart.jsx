@@ -1,40 +1,36 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react'
 
 const AreaProgressChart = () => {
-  const [mostSoldProducts, setMostSoldProducts] = useState([]);
+  const [mostSoldProducts, setMostSoldProducts] = useState([])
 
   useEffect(() => {
     const fetchMostSoldProducts = async () => {
       try {
-        // Make an API request to fetch orders data
-        const response = await fetch("http://localhost:5000/api/orders");
-        const ordersData = await response.json();
-        console.log("Orders data:", ordersData);
+        const response = await fetch('http://localhost:5000/api/orders')
+        const ordersData = await response.json()
+        console.log('Orders data:', ordersData)
 
-        // Count occurrences of each product
-        const productCounts = {};
+        const productCounts = {}
         ordersData.orders.forEach(order => {
-          const { id, product_name } = order;
+          const { id, product_name } = order
           if (!productCounts[product_name]) {
-            productCounts[product_name] = { id, name: product_name, count: 0 };
+            productCounts[product_name] = { id, name: product_name, count: 0 }
           }
-          productCounts[product_name].count++;
-        });
-        console.log("Product counts:", productCounts);
+          productCounts[product_name].count++
+        })
+        console.log('Product counts:', productCounts)
 
-        // Convert product counts to an array and sort by count in descending order
-        const sortedProducts = Object.values(productCounts).sort((a, b) => b.count - a.count);
-        console.log("Sorted products:", sortedProducts);
+        const sortedProducts = Object.values(productCounts).sort((a, b) => b.count - a.count)
+        console.log('Sorted products:', sortedProducts)
 
-        // Set the most sold products state
-        setMostSoldProducts(sortedProducts);
+        setMostSoldProducts(sortedProducts)
       } catch (error) {
-        console.error("Error fetching most sold products:", error);
+        console.error('Error fetching most sold products:', error)
       }
-    };
+    }
 
-    fetchMostSoldProducts();
-  }, []);
+    fetchMostSoldProducts()
+  }, [])
 
   return (
     <div className="progress-bar-cont">
@@ -52,7 +48,7 @@ const AreaProgressChart = () => {
               <div
                 className="bar-item-filled"
                 style={{
-                  width: `${(product.count / mostSoldProducts[0].count) * 100}%`,
+                  width: `${(product.count / mostSoldProducts[0].count) * 100}%`
                 }}
               ></div>
             </div>
@@ -60,7 +56,7 @@ const AreaProgressChart = () => {
         ))}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default AreaProgressChart;
+export default AreaProgressChart

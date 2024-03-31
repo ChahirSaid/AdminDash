@@ -1,56 +1,55 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import "./Product.scss";
-import profileImage from "./image/Profile Icon.webp";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
+import './Product.scss'
+import profileImage from './image/Profile Icon.webp'
+import 'bootstrap/dist/css/bootstrap.min.css'
+import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 import {
   BsPlus,
   BsPencilSquare,
   BsTrash,
-  BsPlusCircleDotted,
-} from "react-icons/bs";
+  BsPlusCircleDotted
+} from 'react-icons/bs'
 
 const Product = () => {
   const initialFormData = {
-    name: "",
-    brand: "",
+    name: '',
+    brand: '',
     price: 0,
-    status: "In Stock",
-    picture: null,
-  };
+    status: 'In Stock',
+    picture: null
+  }
 
-  const [formData, setFormData] = useState(initialFormData);
-  const [productData, setProductData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [showModal, setShowModal] = useState(false);
-  const [selectedPicture, setSelectedPicture] = useState(null);
-  const [isEdit, setIsEdit] = useState(false);
-  const [editId, setEditId] = useState(null);
+  const [formData, setFormData] = useState(initialFormData)
+  const [productData, setProductData] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [showModal, setShowModal] = useState(false)
+  const [isEdit, setIsEdit] = useState(false)
+  const [editId, setEditId] = useState(null)
 
   useEffect(() => {
-    fetchProductData();
-  }, []);
+    fetchProductData()
+  }, [])
 
   const fetchProductData = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/products");
-      setProductData(response.data);
-      setLoading(false);
+      const response = await axios.get('http://localhost:5000/api/products')
+      setProductData(response.data)
+      setLoading(false)
     } catch (error) {
-      console.error("Error fetching product data:", error);
+      console.error('Error fetching product data:', error)
     }
-  };
+  }
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
     try {
-      const formDataToSend = new FormData();
-      formDataToSend.append("name", formData.name);
-      formDataToSend.append("brand", formData.brand);
-      formDataToSend.append("price", formData.price);
-      formDataToSend.append("status", formData.status);
-      formDataToSend.append("picture", formData.picture);
+      const formDataToSend = new FormData()
+      formDataToSend.append('name', formData.name)
+      formDataToSend.append('brand', formData.brand)
+      formDataToSend.append('price', formData.price)
+      formDataToSend.append('status', formData.status)
+      formDataToSend.append('picture', formData.picture)
 
       if (isEdit) {
         await axios.put(
@@ -58,73 +57,73 @@ const Product = () => {
           formDataToSend,
           {
             headers: {
-              "Content-Type": "multipart/form-data",
-            },
+              'Content-Type': 'multipart/form-data'
+            }
           }
-        );
+        )
       } else {
         await axios.post(
-          "http://localhost:5000/api/products",
+          'http://localhost:5000/api/products',
           formDataToSend,
           {
             headers: {
-              "Content-Type": "multipart/form-data",
-            },
+              'Content-Type': 'multipart/form-data'
+            }
           }
-        );
+        )
       }
-      fetchProductData();
-      setFormData(initialFormData);
-      setShowModal(false);
-      setIsEdit(false);
+      fetchProductData()
+      setFormData(initialFormData)
+      setShowModal(false)
+      setIsEdit(false)
     } catch (error) {
-      console.error("Error submitting product data:", error);
+      console.error('Error submitting product data:', error)
     }
-  };
+  }
 
   const handleInputChange = (e) => {
-    const { name, value, files } = e.target;
-    if (name === "picture") {
-      setFormData({ ...formData, picture: files[0] });
+    const { name, value, files } = e.target
+    if (name === 'picture') {
+      setFormData({ ...formData, picture: files[0] })
     } else {
-      setFormData({ ...formData, [name]: value });
+      setFormData({ ...formData, [name]: value })
     }
-  };
+  }
 
   const handleEdit = (index) => {
-    setIsEdit(true);
-    setEditId(productData[index].id);
-    setShowModal(true);
+    setIsEdit(true)
+    setEditId(productData[index].id)
+    setShowModal(true)
     setFormData({
       ...productData[index],
-      picture: null,
-    });
-  };
+      picture: null
+    })
+  }
 
   const handleDelete = async (index) => {
     try {
       await axios.delete(
         `http://localhost:5000/api/products/${productData[index].id}`
-      );
-      fetchProductData();
+      )
+      fetchProductData()
     } catch (error) {
-      console.error("Error deleting product:", error);
+      console.error('Error deleting product:', error)
     }
-  };
+  }
   const createObjectURL = (file) => {
     try {
-      return file ? URL.createObjectURL(file) : null;
+      return file ? URL.createObjectURL(file) : null
     } catch (error) {
-      console.error("Failed to create object URL:", error);
-      return null;
+      console.error('Failed to create object URL:', error)
+      return null
     }
-  };
+  }
 
   const handleCloseModal = () => {
-    setShowModal(false);
-    setFormData(initialFormData);
-    setIsEdit(false);
-  };
+    setShowModal(false)
+    setFormData(initialFormData)
+    setIsEdit(false)
+  }
 
   return (
     <section className="product-page">
@@ -154,30 +153,35 @@ const Product = () => {
               </tr>
             </thead>
             <tbody>
-              {loading ? (
+              {loading
+                ? (
                 <tr>
                   <td colSpan="7">Loading...</td>
                 </tr>
-              ) : Array.isArray(productData) ? (
-                productData.map((product, index) => (
+                  )
+                : Array.isArray(productData)
+                  ? (
+                      productData.map((product, index) => (
                   <tr key={index}>
                     <td>{index + 1}</td>
                     <td>
-                      {product.picture ? (
+                      {product.picture
+                        ? (
                         <img
                           src={product.picture}
                           alt=""
                           width="50"
                           height="50"
                         />
-                      ) : (
+                          )
+                        : (
                         <img
                           src={profileImage}
                           alt=""
                           width="50"
                           height="50"
                         />
-                      )}
+                          )}
                     </td>
                     <td>{product.name}</td>
                     <td>{product.brand}</td>
@@ -198,15 +202,16 @@ const Product = () => {
                       </button>
                     </td>
                   </tr>
-                ))
-              ) : null}
+                      ))
+                    )
+                  : null}
             </tbody>
           </table>
         </div>
       </div>
 
       {showModal && (
-        <div className="modal fade show" style={{ display: "block" }}>
+        <div className="modal fade show" style={{ display: 'block' }}>
           <div className="modal-dialog modal-dialog-centered modal-lg">
             <div className="modal-content">
               <div className="modal-header">
@@ -235,8 +240,8 @@ const Product = () => {
                         isEdit
                           ? productData[editId]?.picture || profileImage
                           : formData.picture
-                          ? createObjectURL(formData.picture)
-                          : profileImage
+                            ? createObjectURL(formData.picture)
+                            : profileImage
                       }
                       alt=""
                       width="200"
@@ -311,7 +316,7 @@ const Product = () => {
         </div>
       )}
     </section>
-  );
-};
+  )
+}
 
-export default Product;
+export default Product

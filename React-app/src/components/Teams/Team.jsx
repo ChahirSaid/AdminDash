@@ -1,99 +1,99 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import './Team.scss';
-import { BsPlus, BsPencilSquare, BsTrash } from "react-icons/bs";
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
+import 'bootstrap/dist/css/bootstrap.min.css'
+import 'bootstrap/dist/js/bootstrap.bundle.min.js'
+import './Team.scss'
+import { BsPlus, BsPencilSquare, BsTrash } from 'react-icons/bs'
 
 const Team = () => {
-    const initialFormData = {
-        employeeName: "",
-        employeeAge: "",
-        employeeCity: "",
-        employeeEmail: "",
-        employeePhone: "",
-        employeePost: ""
-    };
+  const initialFormData = {
+    employeeName: '',
+    employeeAge: '',
+    employeeCity: '',
+    employeeEmail: '',
+    employeePhone: '',
+    employeePost: ''
+  }
 
-    const [formData, setFormData] = useState(initialFormData);
-    const [teamData, setTeamData] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [showModal, setShowModal] = useState(false);
-    const [isEdit, setIsEdit] = useState(false);
-    const [editId, setEditId] = useState(null);
+  const [formData, setFormData] = useState(initialFormData)
+  const [teamData, setTeamData] = useState([])
+  const [setLoading] = useState(true)
+  const [showModal, setShowModal] = useState(false)
+  const [isEdit, setIsEdit] = useState(false)
+  const [editId, setEditId] = useState(null)
 
-    useEffect(() => {
-        fetchTeamData();
-    }, []);
+  useEffect(() => {
+    fetchTeamData()
+  }, [])
 
-    const fetchTeamData = async () => {
-        try {
-            const response = await axios.get("http://localhost:5000/api/team");
-            setTeamData(response.data);
-            setLoading(false);
-        } catch (error) {
-            console.error("Error fetching team data:", error);
-        }
-    };
+  const fetchTeamData = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/api/team')
+      setTeamData(response.data)
+      setLoading(false)
+    } catch (error) {
+      console.error('Error fetching team data:', error)
+    }
+  }
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            let response;
-            if (isEdit) {
-                response = await axios.put(`http://localhost:5000/api/team/${editId}`, formData);
-            } else {
-                response = await axios.post("http://localhost:5000/api/team", formData);
-            }            
-            if (response.status === 200 || response.status === 201) {
-                setShowModal(false);
-                fetchTeamData();
-                setFormData(initialFormData);
-                setIsEdit(false);
-            } else {
-                console.error("Error: Unexpected status code", response.status);
-            }
-        } catch (error) {
-            console.error("Error Submitting team data:", error);
-        }
-    };
-    
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-    };
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    try {
+      let response
+      if (isEdit) {
+        response = await axios.put(`http://localhost:5000/api/team/${editId}`, formData)
+      } else {
+        response = await axios.post('http://localhost:5000/api/team', formData)
+      }
+      if (response.status === 200 || response.status === 201) {
+        setShowModal(false)
+        fetchTeamData()
+        setFormData(initialFormData)
+        setIsEdit(false)
+      } else {
+        console.error('Error: Unexpected status code', response.status)
+      }
+    } catch (error) {
+      console.error('Error Submitting team data:', error)
+    }
+  }
 
-    const handleEdit = (index) => {
-        setIsEdit(true);
-        setEditId(teamData[index].id);
-        const selectedMember = teamData[index];
-        setFormData({
-            employeeName: selectedMember.name,
-            employeeAge: selectedMember.age,
-            employeeCity: selectedMember.city,
-            employeeEmail: selectedMember.email,
-            employeePhone: selectedMember.phone,
-            employeePost: selectedMember.post
-        });
-        setShowModal(true);
-    };
+  const handleInputChange = (e) => {
+    const { name, value } = e.target
+    setFormData({ ...formData, [name]: value })
+  }
 
-    const handleDelete = async (index) => {
-        try {
-            await axios.delete(`http://localhost:5000/api/team/${teamData[index].id}`);
-            fetchTeamData();
-        } catch (error) {
-            console.error("Error Deleting Team Member:", error);
-        }
-    };
+  const handleEdit = (index) => {
+    setIsEdit(true)
+    setEditId(teamData[index].id)
+    const selectedMember = teamData[index]
+    setFormData({
+      employeeName: selectedMember.name,
+      employeeAge: selectedMember.age,
+      employeeCity: selectedMember.city,
+      employeeEmail: selectedMember.email,
+      employeePhone: selectedMember.phone,
+      employeePost: selectedMember.post
+    })
+    setShowModal(true)
+  }
 
-    const handleCloseModal = () => {
-        setShowModal(false);
-        setFormData(initialFormData);
-        setIsEdit(false);
-    };
+  const handleDelete = async (index) => {
+    try {
+      await axios.delete(`http://localhost:5000/api/team/${teamData[index].id}`)
+      fetchTeamData()
+    } catch (error) {
+      console.error('Error Deleting Team Member:', error)
+    }
+  }
 
-    return (
+  const handleCloseModal = () => {
+    setShowModal(false)
+    setFormData(initialFormData)
+    setIsEdit(false)
+  }
+
+  return (
         <section className="team-page">
             <div className="row">
                 <div className="col-12">
@@ -140,7 +140,7 @@ const Team = () => {
             </div>
 
             {showModal && (
-                <div className="modal fade show" style={{ display: "block" }}>
+                <div className="modal fade show" style={{ display: 'block' }}>
                     <div className="modal-dialog modal-dialog-centered modal-lg">
                         <div className="modal-content">
                             <div className="modal-header">
@@ -186,7 +186,7 @@ const Team = () => {
                 </div>
             )}
         </section>
-    );
+  )
 }
 
-export default Team;
+export default Team

@@ -1,6 +1,6 @@
-import React from "react";
-import AreaBarChart from "./AreaBarChart"
-import AreaProgressChart from "./AreaProgressChart"
+import React from 'react'
+import AreaBarChart from './AreaBarChart'
+import AreaProgressChart from './AreaProgressChart'
 
 const AreaCharts = ({ ordersData }) => {
   return (

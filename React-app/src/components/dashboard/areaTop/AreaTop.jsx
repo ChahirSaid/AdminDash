@@ -1,42 +1,42 @@
-import { MdOutlineMenu } from "react-icons/md";
-import "./AreaTop.scss";
-import { useContext, useEffect, useRef, useState } from "react";
-import { SidebarContext } from "../../../context/SidebarContext";
-import "react-date-range/dist/styles.css"; // main style file
-import "react-date-range/dist/theme/default.css"; // theme css file
-import { addDays } from "date-fns";
-import { DateRange } from "react-date-range";
+import { MdOutlineMenu } from 'react-icons/md'
+import './AreaTop.scss'
+import { useContext, useEffect, useRef, useState } from 'react'
+import { SidebarContext } from '../../../context/SidebarContext'
+import 'react-date-range/dist/styles.css' // main style file
+import 'react-date-range/dist/theme/default.css' // theme css file
+import { addDays } from 'date-fns'
+import { DateRange } from 'react-date-range'
 
 const AreaTop = () => {
-  const { openSidebar } = useContext(SidebarContext);
+  const { openSidebar } = useContext(SidebarContext)
 
   const [state, setState] = useState([
     {
       startDate: new Date(),
       endDate: addDays(new Date(), 7),
-      key: "selection",
-    },
-  ]);
+      key: 'selection'
+    }
+  ])
 
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const dateRangeRef = useRef(null);
+  const [showDatePicker, setShowDatePicker] = useState(false)
+  const dateRangeRef = useRef(null)
 
   const handleInputClick = () => {
-    setShowDatePicker(true);
-  };
+    setShowDatePicker(true)
+  }
 
   const handleClickOutside = (event) => {
     if (dateRangeRef.current && !dateRangeRef.current.contains(event.target)) {
-      setShowDatePicker(false);
+      setShowDatePicker(false)
     }
-  };
+  }
 
   useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside)
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
 
   return (
     <section className="content-area-top">
@@ -54,7 +54,7 @@ const AreaTop = () => {
         <div
           ref={dateRangeRef}
           className={`date-range-wrapper ${
-            !showDatePicker ? "hide-date-range" : ""
+            !showDatePicker ? 'hide-date-range' : ''
           }`}
           onClick={handleInputClick}
         >
@@ -68,7 +68,7 @@ const AreaTop = () => {
         </div>
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default AreaTop;
+export default AreaTop

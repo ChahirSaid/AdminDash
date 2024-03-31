@@ -1,4 +1,3 @@
-
 const PageNotFound = () => {
   return (
     <div>
