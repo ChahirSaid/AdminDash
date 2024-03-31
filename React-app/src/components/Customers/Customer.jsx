@@ -10,14 +10,15 @@ import {
 } from "react-icons/bs";
 
 const Customer = () => {
-  const [formData, setFormData] = useState({
+  const initialFormData = {
     name: "",
     age: "",
     city: "",
     email: "",
     phone: "",
-  });
+  };
 
+  const [formData, setFormData] = useState(initialFormData);
   const [customerData, setCustomerData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -47,13 +48,7 @@ const Customer = () => {
         await axios.post("http://localhost:5000/api/customer", formData);
       }
       fetchCustomerData();
-      setFormData({
-        name: "",
-        age: "",
-        city: "",
-        email: "",
-        phone: "",
-      });
+      setFormData(initialFormData);
       setShowModal(false);
       setIsEdit(false);
     } catch (error) {
@@ -70,7 +65,7 @@ const Customer = () => {
     setIsEdit(true);
     setEditId(customerData[index].id);
     setShowModal(true);
-    setFormData(customerData[index]);
+    setFormData({ ...customerData[index] });
   };
 
   const handleDelete = async (index) => {
@@ -82,13 +77,22 @@ const Customer = () => {
     }
   };
 
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setFormData(initialFormData);
+  };
+
   return (
     <section className="customer-page">
       <div className="row">
         <div className="col-12">
           <button
             className="btn btn-primary newUser"
-            onClick={() => setShowModal(true)}
+            onClick={() => {
+              setShowModal(true);
+              setIsEdit(false);
+              setFormData(initialFormData);
+            }}
           >
             New Customer <BsPlus size={25} />
           </button>
@@ -154,7 +158,7 @@ const Customer = () => {
                 <button
                   type="button"
                   className="btn-close"
-                  onClick={() => setShowModal(false)}
+                  onClick={handleCloseModal}
                   aria-label="Close"
                 ></button>
               </div>
@@ -162,7 +166,7 @@ const Customer = () => {
                 <form onSubmit={handleSubmit} id="myForm">
                   <div className="inputField">
                     <div>
-                    <label htmlFor="name">Name:</label>
+                      <label htmlFor="name">Name:</label>
                       <input
                         type="text"
                         name="name"
@@ -223,7 +227,7 @@ const Customer = () => {
                     <button
                       type="button"
                       className="btn btn-secondary"
-                      onClick={() => setShowModal(false)}
+                      onClick={handleCloseModal}
                     >
                       Close
                     </button>

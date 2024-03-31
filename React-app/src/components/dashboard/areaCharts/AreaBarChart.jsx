@@ -58,10 +58,8 @@ const AreaBarChart = ({ ordersData }) => {
       setMonths(sortedMonths);
       setData(sortedMonths.map(month => chartData[month]));
   
-      // Calculate total revenue for the current month
       setTotalRevenue(ordersData.totals.total_sales_revenue);
   
-      // Calculate percentage difference
       const prevMonthRevenue = ordersData.orders.reduce((acc, order, index) => {
         if (index === ordersData.orders.length - 2) {
           return acc + Math.abs(order.price);
@@ -85,12 +83,19 @@ const AreaBarChart = ({ ordersData }) => {
     return value.charAt(0).toUpperCase() + value.slice(1);
   };
 
+  const formatRevenue = (value) => {
+    if (value > 9999) {
+      return `${(value / 1000).toFixed(1)}k`;
+    }
+    return value;
+  };
+
   return (
     <div className="bar-chart">
       <div className="bar-chart-info">
         <h5 className="bar-chart-title">Total Revenue</h5>
         <div className="chart-info-data">
-          <div className="info-data-value">{`$${totalRevenue}`}</div>
+          <div className="info-data-value">{`$${formatRevenue(totalRevenue)}`}</div>
           <div className="info-data-text">
             <FaArrowUpLong />
             <p>{`${percentageDifference}% than last month.`}</p>
@@ -127,7 +132,9 @@ const AreaBarChart = ({ ordersData }) => {
               }}
             />
             <Tooltip
-              formatter={formatTooltipValue}
+              formatter={(value, name) => {
+                return [formatRevenue(value), name];
+              }}
               cursor={{ fill: "transparent" }}
             />
             <Legend
