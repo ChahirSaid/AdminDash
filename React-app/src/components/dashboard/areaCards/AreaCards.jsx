@@ -1,34 +1,36 @@
+// AreaCards.jsx
+
 import React, { useState, useEffect } from "react";
 import "./AreaCards.scss";
 import AreaCard from "./AreaCard";
 
 const AreaCards = ({ ordersData }) => {
-  console.log("Received ordersData prop in AreaCards:", ordersData);
-
-  const { totals } = ordersData;
-  
-  const [updatedTotals, setUpdatedTotals] = useState(totals);
+  const [updatedTotals, setUpdatedTotals] = useState(null);
 
   useEffect(() => {
-    console.log("useEffect triggered with new totals:", totals);
-    setUpdatedTotals(totals);
-  }, [totals]);
-  
-  console.log("Updated totals:", updatedTotals);
-  
+    if (ordersData) {
+      const { totals, orders } = ordersData;
+      if (orders && orders.length > 0 && totals.refunded_orders && totals.refunded_orders.length > 0) {
+        const refundedAmount = totals.refunded_orders.reduce((acc, order) => acc + order.price, 0);
+        setUpdatedTotals({
+          ...totals,
+          total_profit: totals.total_profit - refundedAmount * 0.7,
+        });
+      } else {
+        setUpdatedTotals(totals);
+      }
+    }
+  }, [ordersData]);
 
-  if (updatedTotals.refunded_orders && updatedTotals.refunded_orders.length > 0) {
-    updatedTotals.refunded_orders.forEach(refundedOrder => {
-      updatedTotals.total_sales_revenue -= refundedOrder.price;
-      updatedTotals.total_profit -= refundedOrder.price;
-    });
+  if (!ordersData || !updatedTotals) {
+    return <div>Loading...</div>;
   }
 
   return (
     <section className="content-area-cards">
       <AreaCard
         colors={["#e4e8ef", "#475be8"]}
-        percentFillValue={50}
+        percentFillValue={(updatedTotals.total_sales_revenue / updatedTotals.total_profit) * 100}
         cardInfo={{
           title: "Total Sales Revenue",
           value: `$${updatedTotals.total_sales_revenue.toFixed(2)}`,
@@ -37,7 +39,7 @@ const AreaCards = ({ ordersData }) => {
       />
       <AreaCard
         colors={["#e4e8ef", "#4ce13f"]}
-        percentFillValue={50}
+        percentFillValue={(updatedTotals.total_profit / updatedTotals.total_sales_revenue) * 100}
         cardInfo={{
           title: "Total Profit",
           value: `$${updatedTotals.total_profit.toFixed(2)}`,
@@ -46,10 +48,10 @@ const AreaCards = ({ ordersData }) => {
       />
       <AreaCard
         colors={["#e4e8ef", "#f29a2e"]}
-        percentFillValue={50}
+        percentFillValue={(updatedTotals.profit_per_order / updatedTotals.total_profit) * 100}
         cardInfo={{
           title: "Average Profit per Order",
-          value: `$${totals.profit_per_order.toFixed(2)}`,
+          value: `$${updatedTotals.profit_per_order.toFixed(2)}`,
           text: "Average profit per order",
         }}
       />

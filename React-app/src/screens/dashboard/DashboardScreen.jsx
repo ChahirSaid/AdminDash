@@ -10,6 +10,7 @@ const Dashboard = () => {
         const response = await fetch("http://localhost:5000/api/orders");
         const data = await response.json();
         setOrdersData(data);
+        console.log("data from dashboard:", data);
       } catch (error) {
         console.error("Error fetching orders data:", error);
       }

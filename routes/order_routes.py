@@ -72,7 +72,7 @@ def get_all_orders():
 
                 total_sales_revenue += product_price
 
-        total_profit = sum(order['price'] - (order['price'] * 0.7) for order in orders_data)
+        total_profit = sum(order['price'] * 0.7 if order['status'] != 'Refunded' else 0 for order in orders_data)
 
         response_data = {
             'total_sales_revenue': total_sales_revenue,
