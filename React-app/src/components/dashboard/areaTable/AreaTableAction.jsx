@@ -1,9 +1,9 @@
-import { BsTrash } from "react-icons/bs";
+import { BsTrash } from 'react-icons/bs'
 
 const AreaTableAction = ({ orderId, handleDelete }) => {
   const handleClickDelete = () => {
-    handleDelete(orderId);
-  };
+    handleDelete(orderId)
+  }
 
   return (
     <button
@@ -13,7 +13,7 @@ const AreaTableAction = ({ orderId, handleDelete }) => {
     >
       <BsTrash size={18} />
     </button>
-  );
-};
+  )
+}
 
-export default AreaTableAction;
+export default AreaTableAction

@@ -1,86 +1,86 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import "./Customer.scss";
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
+import './Customer.scss'
+import 'bootstrap/dist/css/bootstrap.min.css'
+import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 import {
   BsPlus,
   BsPencilSquare,
-  BsTrash,
-} from "react-icons/bs";
+  BsTrash
+} from 'react-icons/bs'
 
 const Customer = () => {
   const initialFormData = {
-    name: "",
-    age: "",
-    city: "",
-    email: "",
-    phone: "",
-  };
+    name: '',
+    age: '',
+    city: '',
+    email: '',
+    phone: ''
+  }
 
-  const [formData, setFormData] = useState(initialFormData);
-  const [customerData, setCustomerData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [showModal, setShowModal] = useState(false);
-  const [isEdit, setIsEdit] = useState(false);
-  const [editId, setEditId] = useState(null);
+  const [formData, setFormData] = useState(initialFormData)
+  const [customerData, setCustomerData] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [showModal, setShowModal] = useState(false)
+  const [isEdit, setIsEdit] = useState(false)
+  const [editId, setEditId] = useState(null)
 
   useEffect(() => {
-    fetchCustomerData();
-  }, []);
+    fetchCustomerData()
+  }, [])
 
   const fetchCustomerData = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/customer");
-      setCustomerData(response.data);
-      setLoading(false);
+      const response = await axios.get('http://localhost:5000/api/customer')
+      setCustomerData(response.data)
+      setLoading(false)
     } catch (error) {
-      console.error("Error fetching customer data:", error);
+      console.error('Error fetching customer data:', error)
     }
-  };
+  }
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
     try {
       if (isEdit) {
-        await axios.put(`http://localhost:5000/api/customer/${editId}`, formData);
+        await axios.put(`http://localhost:5000/api/customer/${editId}`, formData)
       } else {
-        await axios.post("http://localhost:5000/api/customer", formData);
+        await axios.post('http://localhost:5000/api/customer', formData)
       }
-      fetchCustomerData();
-      setFormData(initialFormData);
-      setShowModal(false);
-      setIsEdit(false);
+      fetchCustomerData()
+      setFormData(initialFormData)
+      setShowModal(false)
+      setIsEdit(false)
     } catch (error) {
-      console.error("Error submitting customer data:", error);
+      console.error('Error submitting customer data:', error)
     }
-  };
+  }
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
+    const { name, value } = e.target
+    setFormData({ ...formData, [name]: value })
+  }
 
   const handleEdit = (index) => {
-    setIsEdit(true);
-    setEditId(customerData[index].id);
-    setShowModal(true);
-    setFormData({ ...customerData[index] });
-  };
+    setIsEdit(true)
+    setEditId(customerData[index].id)
+    setShowModal(true)
+    setFormData({ ...customerData[index] })
+  }
 
   const handleDelete = async (index) => {
     try {
-      await axios.delete(`http://localhost:5000/api/customer/${customerData[index].id}`);
-      fetchCustomerData();
+      await axios.delete(`http://localhost:5000/api/customer/${customerData[index].id}`)
+      fetchCustomerData()
     } catch (error) {
-      console.error("Error deleting customer:", error);
+      console.error('Error deleting customer:', error)
     }
-  };
+  }
 
   const handleCloseModal = () => {
-    setShowModal(false);
-    setFormData(initialFormData);
-  };
+    setShowModal(false)
+    setFormData(initialFormData)
+  }
 
   return (
     <section className="customer-page">
@@ -89,9 +89,9 @@ const Customer = () => {
           <button
             className="btn btn-primary newUser"
             onClick={() => {
-              setShowModal(true);
-              setIsEdit(false);
-              setFormData(initialFormData);
+              setShowModal(true)
+              setIsEdit(false)
+              setFormData(initialFormData)
             }}
           >
             New Customer <BsPlus size={25} />
@@ -114,12 +114,15 @@ const Customer = () => {
               </tr>
             </thead>
             <tbody>
-              {loading ? (
+              {loading
+                ? (
                 <tr>
                   <td colSpan="7">Loading...</td>
                 </tr>
-              ) : Array.isArray(customerData) ? (
-                customerData.map((customer, index) => (
+                  )
+                : Array.isArray(customerData)
+                  ? (
+                      customerData.map((customer, index) => (
                   <tr key={index}>
                     <td>{index + 1}</td>
                     <td>{customer.name}</td>
@@ -142,15 +145,16 @@ const Customer = () => {
                       </button>
                     </td>
                   </tr>
-                ))
-              ) : null}
+                      ))
+                    )
+                  : null}
             </tbody>
           </table>
         </div>
       </div>
 
       {showModal && (
-        <div className="modal fade show" style={{ display: "block" }}>
+        <div className="modal fade show" style={{ display: 'block' }}>
           <div className="modal-dialog modal-dialog-centered modal-lg">
             <div className="modal-content">
               <div className="modal-header">
@@ -242,7 +246,7 @@ const Customer = () => {
         </div>
       )}
     </section>
-  );
-};
+  )
+}
 
-export default Customer;
+export default Customer

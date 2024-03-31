@@ -1,45 +1,45 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
-import AreaTableAction from "./AreaTableAction";
-import "./AreaTable.scss";
+import { useState, useEffect } from 'react'
+import axios from 'axios'
+import AreaTableAction from './AreaTableAction'
+import './AreaTable.scss'
 
 const TABLE_HEADS = [
-  "Products",
-  "Order ID",
-  "Customer name",
-  "Status",
-  "Price",
-  "Action",
-];
+  'Products',
+  'Order ID',
+  'Customer name',
+  'Status',
+  'Price',
+  'Action'
+]
 
 const AreaTable = () => {
-  const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [orders, setOrders] = useState([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetchOrders();
-  }, []);
+    fetchOrders()
+  }, [])
 
   const fetchOrders = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/orders");
-      console.log("Orders data:", response.data);
-      setOrders(response.data.orders || []);
-      setLoading(false);
+      const response = await axios.get('http://localhost:5000/api/orders')
+      console.log('Orders data:', response.data)
+      setOrders(response.data.orders || [])
+      setLoading(false)
     } catch (error) {
-      console.error("Error fetching orders:", error);
-      setLoading(false);
+      console.error('Error fetching orders:', error)
+      setLoading(false)
     }
-  };
+  }
 
   const handleDelete = async (orderId) => {
     try {
-      await axios.delete(`http://localhost:5000/api/orders/${orderId}`);
-      fetchOrders();
+      await axios.delete(`http://localhost:5000/api/orders/${orderId}`)
+      fetchOrders()
     } catch (error) {
-      console.error("Error deleting order:", error);
+      console.error('Error deleting order:', error)
     }
-  };
+  }
 
   return (
     <section className="content-area-table">
@@ -60,7 +60,7 @@ const AreaTable = () => {
               <tr>
                 <td colSpan={TABLE_HEADS.length}>Loading...</td>
               </tr>
-            ) : !orders || orders.length === 0 ? ( // Check if orders is null or undefined
+            ) : !orders || orders.length === 0 ? (
               <tr>
                 <td colSpan={TABLE_HEADS.length}>No orders found.</td>
               </tr>
@@ -68,7 +68,7 @@ const AreaTable = () => {
               orders.map((order, index) => (
                 <tr key={order.id}>
                   <td>{order.product_name}</td>
-                  <td>{order.id}</td> {/* Display actual order ID */}
+                  <td>{order.id}</td>
                   <td>{order.customer_name}</td>
                   <td>
                     <div className={`dt-status dot-${order.status}`}>
@@ -76,7 +76,7 @@ const AreaTable = () => {
                       <span className="dt-status-text">{order.status}</span>
                     </div>
                   </td>
-                  <td>{order.price ? `$${order.price.toFixed(2)}` : 'N/A'}</td> {/* Display price */}
+                  <td>{order.price ? `$${order.price.toFixed(2)}` : 'N/A'}</td>
                   <td className="dt-cell-action">
                     <AreaTableAction orderId={order.id} handleDelete={handleDelete} />
                   </td>
@@ -87,7 +87,7 @@ const AreaTable = () => {
         </table>
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default AreaTable;
+export default AreaTable

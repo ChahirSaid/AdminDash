@@ -19,8 +19,10 @@ app.register_blueprint(team_bp)
 app.register_blueprint(customer_bp)
 app.register_blueprint(order_bp)
 migrate = Migrate(app, db)
-CORS(app, resources={r"/auth": {"origins": "http://localhost:5173"}}, supports_credentials=True)
-CORS(app, resources={r"/api/*": {"origins": "http://localhost:5173"}}, supports_credentials=True)
+CORS(app, resources={r"/auth": {"origins": "http://localhost:5173"}},
+     supports_credentials=True)
+CORS(app, resources={r"/api/*": {"origins": "http://localhost:5173"}},
+     supports_credentials=True)
 DEFAULT_ADMIN_USERNAME = 'admin'
 DEFAULT_ADMIN_PASSWORD = 'admin'
 
@@ -37,8 +39,8 @@ def auth():
         username = data.get('username')
         password = data.get('password')
 
-        if username == DEFAULT_ADMIN_USERNAME and password == DEFAULT_ADMIN_PASSWORD:
-            # Set session for admin user
+        if (username == DEFAULT_ADMIN_USERNAME and
+                password == DEFAULT_ADMIN_PASSWORD):
             session['username'] = username
             session['role'] = 'admin'
             session['email'] = 'admin@example.com'
@@ -56,7 +58,6 @@ def auth():
             team_member = TeamMember.query.filter_by(username=username).first()
             if team_member:
                 if check_password_hash(team_member.password_hash, password):
-                    # Set session for team member
                     session['username'] = username
                     session['role'] = 'team_member'
                     session['email'] = team_member.employeeEmail
@@ -71,7 +72,7 @@ def auth():
                     }
                     return jsonify(response_data), 200
                 else:
-                    return jsonify({'message':'Invalid Credentials'}), 401
+                    return jsonify({'message': 'Invalid Credentials'}), 401
             else:
                 return jsonify({'message': 'User not found'}), 404
     return jsonify({'message': 'Method not allowed'}), 405

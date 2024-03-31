@@ -1,36 +1,34 @@
-import React, { useState, useEffect } from 'react';
-import { Chart, registerables} from 'chart.js';
+import React, { useState, useEffect } from 'react'
+import { Chart, registerables } from 'chart.js'
+import './Statistics.scss'
 
-Chart.register(...registerables);
-import './Statistics.scss';
-
-
+Chart.register(...registerables)
 
 const Statistics = () => {
-  const [myChart, setMyChart] = useState(null);
-  const [jsonData, setJsonData] = useState([
-    {"month": "January", "income": 1000},
-    {"month": "February", "income": 1500},
-    {"month": "March", "income": 1200},
-    {"month": "April", "income": 1800},
-    {"month": "May", "income": 2000},
-    {"month": "June", "income": 1700}
-  ]);
+  const [myChart, setMyChart] = useState(null)
+  const [jsonData] = useState([
+    { month: 'January', income: 1000 },
+    { month: 'February', income: 1500 },
+    { month: 'March', income: 1200 },
+    { month: 'April', income: 1800 },
+    { month: 'May', income: 2000 },
+    { month: 'June', income: 1700 }
+  ])
 
   useEffect(() => {
-    createChart(jsonData, 'bar');
-  }, []);
+    createChart(jsonData, 'bar')
+  }, [])
 
   const createChart = (data, type) => {
     if (myChart) {
-      myChart.destroy();
+      myChart.destroy()
     }
-    const ctx = document.getElementById('myChart').getContext('2d');
+    const ctx = document.getElementById('myChart').getContext('2d')
 
-    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
 
     const newChart = new Chart(ctx, {
-      type: type,
+      type,
       data: {
         labels: data.map(row => row.month),
         datasets: [{
@@ -49,13 +47,13 @@ const Statistics = () => {
         responsive: true,
         maintainAspectRatio: true
       }
-    });
-    setMyChart(newChart);
-  };
+    })
+    setMyChart(newChart)
+  }
 
   const setChartType = chartType => {
-    createChart(jsonData, chartType);
-  };
+    createChart(jsonData, chartType)
+  }
 
   return (
     <div className="chart">
@@ -68,7 +66,7 @@ const Statistics = () => {
       </div>
       <canvas id="myChart" width="400" height="400"></canvas>
     </div>
-  );
-};
+  )
+}
 
-export default Statistics;
+export default Statistics
