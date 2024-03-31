@@ -124,6 +124,7 @@ def update_passwd_member():
     print("Password updated successfully")
     return jsonify({'message': 'Password Updated Successfully'}), 200
 
+
 @team_bp.route('/<int:id>', methods=['PUT'])
 def update_team_member(id):
     member = TeamMember.query.get_or_404(id)

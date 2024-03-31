@@ -49,7 +49,7 @@ const Product = () => {
       formDataToSend.append("brand", formData.brand);
       formDataToSend.append("price", formData.price);
       formDataToSend.append("status", formData.status);
-      formDataToSend.append("picture", formData.picture); // Add the file to FormData
+      formDataToSend.append("picture", formData.picture);
 
       if (isEdit) {
         await axios.put(
@@ -57,14 +57,14 @@ const Product = () => {
           formDataToSend,
           {
             headers: {
-              "Content-Type": "multipart/form-data", // Set content type for FormData
+              "Content-Type": "multipart/form-data",
             },
           }
         );
       } else {
         await axios.post("http://localhost:5000/api/products", formDataToSend, {
           headers: {
-            "Content-Type": "multipart/form-data", // Set content type for FormData
+            "Content-Type": "multipart/form-data",
           },
         });
       }
