@@ -11,6 +11,7 @@ AdminDash is an admin dashboard application built using Flask SQLAlchemy for the
 - [cURL Usage](#curl-usage)
 - [Contributing](#contributing)
 - [Authors](#authors)
+- [Screenshots](#screenshots)
 - [License](#license)
 
 ## Features
@@ -129,6 +130,22 @@ AdminDash was created and is maintained by the following individuals:
 
 - **Said Chahir** - Lead Developer - [@ChahirSaid](https://github.com/ChahirSaid)
 - **Othmane Boubecheur** - Lead Developer - [@glackyy](https://github.com/glackyy)
+
+## Screenshots
+
+Here are some screenshots of AdminDash:
+
+#### Screenshot 1
+
+![Screenshot 1](screenshots/screenshot1.png)
+
+#### Screenshot 2
+
+![Screenshot 2](screenshots/screenshot2.png)
+
+#### Screenshot 3
+
+![Screenshot 3](screenshots/screenshot3.png)
 
 ## License
 
