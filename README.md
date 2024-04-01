@@ -10,6 +10,7 @@ AdminDash is an admin dashboard application built using Flask SQLAlchemy for the
 - [Data Model](#data-model)
 - [cURL Usage](#curl-usage)
 - [Contributing](#contributing)
+- [Authors](#authors)
 - [License](#license)
 
 ## Features
@@ -66,9 +67,9 @@ npm run dev
 ```
 ## Data Model
 
-## Authentication Data Model
+#### Authentication Data Model
 
-[Authentication Data Model](datamodel/authentication.png)
+![Authentication Data Model](datamodel/authentication.png)
 
 The authentication data model represents the process of employee authentication.
 
@@ -79,7 +80,7 @@ The authentication data model represents the process of employee authentication.
 When an employee tries to log in, the system verifies their credentials against the **User** entity. If the username and password hash match an employee's credentials, the system redirects them to the main page. Otherwise, the system displays a credentials error message.
 
 
-## Tables UML Diagram
+#### Tables UML Diagram
 
 ![Tables UML Diagram](datamodel/tables-uml.png)
 
