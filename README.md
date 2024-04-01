@@ -137,15 +137,35 @@ Here are some screenshots of AdminDash:
 
 #### Screenshot 1
 
-![Screenshot 1](screenshots/screenshot1.png)
+![Screenshot 1](screenshots/0.png)
 
 #### Screenshot 2
 
-![Screenshot 2](screenshots/screenshot2.png)
+![Screenshot 2](screenshots/1.png)
 
 #### Screenshot 3
 
-![Screenshot 3](screenshots/screenshot3.png)
+![Screenshot 3](screenshots/2.png)
+
+#### Screenshot 4
+
+![Screenshot 4](screenshots/3.png)
+
+#### Screenshot 5
+
+![Screenshot 5](screenshots/4.png)
+
+#### Screenshot 6
+
+![Screenshot 6](screenshots/5.png)
+
+#### Screenshot 7
+
+![Screenshot 7](screenshots/6.png)
+
+#### Screenshot 8
+
+![Screenshot 8](screenshots/7.png)
 
 ## License
 
