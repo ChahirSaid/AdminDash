@@ -133,7 +133,7 @@ AdminDash was created and is maintained by the following individuals:
 
 ## Screenshots
 
-Here are some screenshots of AdminDash:
+Here are some screenshots of AdminDash in dark mode:
 
 #### Screenshot 1
 
