@@ -24,6 +24,16 @@
   // box shadow
   --light-shadow1: rgba(0, 0, 0, 0.02) 0px 4px 12px;
 }
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-thumb {
+  background-color: rgb(216, 216, 216);
+  border-radius: 40px;
+}
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
 
 // color mode toggle mixins
 @mixin lightMode {
