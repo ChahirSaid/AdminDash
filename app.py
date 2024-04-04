@@ -8,8 +8,19 @@ from routes.product_routes import product_bp
 from routes.team_routes import team_bp
 from routes.customer_routes import customer_bp
 from routes.order_routes import order_bp
+from flask_swagger_ui import get_swaggerui_blueprint
 
 app = Flask(__name__)
+SWAGGER_URL = '/swagger'
+API_URL = '/static/swagger.json'
+swaggerui_blueprint = get_swaggerui_blueprint(
+    SWAGGER_URL,
+    API_URL,
+    config={
+        'app_name': "AdminDash"
+    }
+)
+app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
 app.config['SECRET_KEY'] = 'SuperAdmin'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///admindash.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -19,6 +30,7 @@ app.register_blueprint(team_bp)
 app.register_blueprint(customer_bp)
 app.register_blueprint(order_bp)
 migrate = Migrate(app, db)
+CORS(app)
 CORS(app, resources={r"/auth": {"origins": "http://localhost:5173"}},
      supports_credentials=True)
 CORS(app, resources={r"/api/*": {"origins": "http://localhost:5173"}},
